@@ -1,0 +1,19 @@
+{
+    "plugins": ["signature"],
+    "pluginsConfig": {
+      "gitbook-plugin-signature":{
+          "autoTimeStamp":{
+            "color":"gray",
+            "timeStampFormat": "YYYY/MM/DD HH:mm:ss"
+          },
+          "autoCopyright":{
+             "color":"gray",
+             "owner":"coder4",
+             "center":true
+          },
+          "signature":{
+            "key": "customized signature"
+          }
+      }
+    }
+}
