@@ -1,2 +1,0 @@
-# Kanboard Scrum看板
-
