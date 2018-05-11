@@ -75,7 +75,7 @@ spec:
 我们来解读一下这个yaml文件，采用自底向上的步骤：
 * Pod定义：如注释标记，文件的下半部分定义了Pod信息。
 　* metadata.labels.app是Pod的标签名，用于与Deployment、Replica Set和Service做关联。
-  * spec.containers定义了Pod的名字(name)、镜像(image)和开放端口(ports)。这里我们采用了预先写好的一个微服务镜像，他同时具有REST服务和RPC服务，分别监听8080端口和3000端口。
+  * spec.containers定义了Pod的名字(name)、镜像(image)和开放端口(ports)。这里使用了我预先编译好的一个微服务镜像，它集成了REST服务和RPC服务，分别监听8080端口和3000端口。
 * Deployment定义：文件的上半部分，是部署的定义。
  * kind类型是Deployment
  * metadata.name是Deployment的名字，用于后续的进一步操作
@@ -140,7 +140,9 @@ $
 
 ```
 
-然后再次尝试Pod上的HTTP服务，可以成功访问了：
+注意：若需要登录到minikube虚拟机后再执行的操作，我们会增加一个$符号，以便区分。
+
+登录到minikube虚拟机后，再次尝试Pod上的HTTP服务，可以成功访问了：
 ```shell
 $curl http://172.17.0.5:8080/lmsia-abc/api/
 
