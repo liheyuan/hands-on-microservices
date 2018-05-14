@@ -48,7 +48,7 @@ Kubernetes支持两种操作方式：命令行参数、yaml文件定义。鉴于
 Deployment描述文件，lmsia-abc-server-deployment.yaml
 ```yaml
 
-apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+apiVersion: apps/v1
 // Deployment
 kind: Deployment
 metadata:
