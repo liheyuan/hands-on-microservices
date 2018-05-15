@@ -53,15 +53,19 @@ TargetPort:        8080/TCP
 Endpoints:         172.17.0.4:8080,172.17.0.5:8080
 Session Affinity:  None
 Events:            <none>
+
 ```
 
 上面返回的结果中，有一些关键信息：
  * Type: 指的是ServiceType，ClusterIP是仅供集群内访问的负载均衡IP。类似的，如果想将虚拟IP暴露给集群外，可以使用NodePort等，具体可以参考官方文档[Publising Service Types](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types)。
  * IP: 服务提同的虚拟IP地址。
- * TargetPort: 需要负载均衡的端口，这里与服务内一致即8080
+ * Port: 微服务进程上的端口，即HTTP的8080和RPC的3000
+ * TargetPort: 虚拟IP对外提供负载均衡的端口，由于我们未单独制定，默认是与上述Port保持一致的。
  * Endpoints：我们在Deployment中定义的两个Pod。Service通过虚拟IP将流量分发到这两个后端Pod上。
 
-让我们来验证下负载均衡的地址，首先登录到minikube
+让我们来验证下负载均衡的配置是否生效，由于rpc接口的数据格式较为复杂，在此我们仅验证http端口。
+
+首先登录到minikube
 ```shell
 minikube ssh
 
@@ -73,7 +77,7 @@ Hello, REST
 
 ```
 
-我们执行了两次，都成功了，那么这个请求真的被均匀地分发到后端上了么？我们需要验证一下。
+我们执行了两次，都成功了，那么这个请求真的被均匀地分发到后端的进程上了么？我们需要验证一下。
 
 首先获取两个容器的ID
 ```shell
@@ -125,7 +129,7 @@ $ docker exec -i -t 608decbb198dcbdce5442a4401eeeec1cb316e483ddba2d5c993ea10081a
 
 需要指出的是：Kubernetes的虚拟IP内置了多种实现，目前以ipvs性能最好，具体可以查看[Virtual IPs and service proxies](https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies)
 
-现在让我们来回顾下这一节的标题"微服务的自动发现"。对于服务发现这个需求，我们目前的效果似乎并不这么完美，为什么这样说呢？我们目前是通过虚拟IP直接访问的服务，但在实际生产环境中，每个Service创建的虚拟IP并不固定，我们不可能将这些虚拟IP分别配置在依赖Service的众多其他微服务中。
+现在让我们来回顾下这一节的标题："微服务的自动发现"。对于服务发现这个需求，我们目前的效果似乎并不这么完美，为什么这样说呢？我们目前是通过虚拟IP直接访问的服务，但在实际生产环境中，每个Service创建的虚拟IP并不固定，我们不可能将这些虚拟IP分别配置在依赖的众多微服务中。
 
 幸运的是，Kubernetes早就为我们解决了这个问题。在创建Service的同时，Kubernetes还为我们创建了一条DNS记录，我们可以通过域名直接访问虚拟IP：
 ```shell
@@ -138,11 +142,11 @@ Hello, REST
 
 只需约定好微服务的Service命名方式，就可以轻松地定位到微服务Service的虚拟IP，通过访问虚拟IP，可以自动分发并负载均衡到对应的若干Pod上。至此，我们借助Kubernetes的Service功能，"近似完美"地实现了服务的注册与发现。
 
-为什么讲"近似完美"呢？这里还会有一个小坑。熟悉DNS协议的朋友知道，为了提升查询效率，DNS被设计成可以多级缓存的。在Java的JVM虚拟机上，也会进行DNS缓存，但这个缓存有效期默认是-1即永久。这也就意味着，如果我们删除这个Service重新创建，那么虚拟IP的变更将不会自动反馈到依赖这个Service的微服务中。
+为什么讲"近似完美"呢？这里还会有一个小坑。熟悉DNS协议的朋友知道，为了提升查询效率，DNS被设计成可以多级缓存的。在Java的JVM虚拟机上，也会进行DNS缓存，但这个缓存有效期默认是-1即永久。这也就意味着，如果我们删除这个Service重新创建，那么虚拟IP的变更将不会自动反馈到相应微服务的JVM中。
 
 为了解决这个小坑，一般建议修改JVM的安全设置，修改缓存TTL时间，具体可以参考[亚马逊AWS的这篇介绍](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/java-dg-jvm-ttl.html)。
 
-我们为本章构建的Docker镜像已经解决了这个问题：
+我们为本章构建的Docker镜像也自动解决了这个问题：
 
 ```shell
 FROM anapsix/alpine-java:8_server-jre
@@ -159,7 +163,7 @@ CMD ["java", "-jar", "lmsia-abc-server.jar"]
 
 其中`anapsix/alpine-java:8_server-jre`是我们依赖的基础镜像，它将DNS Cache设置为了10秒钟，读者也可以直接使用这个基础镜像。
 
-需要特别说明的时：若想使用上述的自动发现机制，必须使用Kubernetes的DNS服务：
+需要特别说明的时：若想使用上述的自动发现机制，必须使用Kubernetes的DNS服务，它默认是开启的：
 ```shell
 kubectl -n kube-system get svc kube-dns
 
@@ -171,4 +175,4 @@ kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP   3d
 * 将DNS通过NodePort的方式暴露出去，可以参考[这篇讨论](https://stackoverflow.com/questions/37449121/how-to-expose-kube-dns-service-for-queries-outside-cluster)
 * 打通办公内网和集群内网，本书后续章节[OpenVPN + NAT 打通办公网与IDC](devops/openvpn-nat.md)将对此做出介绍。
 
-[^1]: 这一特性并未记录在官方文档中，本书假设该特性有效。
+[^1]: 这一特性并未记录在官方文档中，本书假设该特性持续有效。
