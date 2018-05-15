@@ -37,7 +37,7 @@
     * [Nexus 私有maven仓库](toolchain/nexus.md)
     * [BOM 减少版本冲突](toolchain/bom.md)
     * [Spring Boot 项目模板](toolchain/spring-boot-template.md)
-    * [懒人脚本](toolchain/spring-boot-scripts.md)
+    * [开发效率脚本](toolchain/spring-boot-scripts.md)
     * [Gatling 打压工具](toolchain/gatling.md)
 * [运维工具链实战](devops/README.md)
     * [Docker 私有仓库](devops/docker-repo.md)
