@@ -164,7 +164,7 @@ dependencies {
 
 ## client子项目的代码结构
 
-接下来，我们看一下client子项目的结构：
+接下来，我们看一下client子项目的目录结构：
 ```shell
 ├── build.gradle
 └── src
@@ -200,6 +200,92 @@ dependencies {
 
 ## server子项目的代码结构
 
+看一下server子项目的目录结构：
+```shell
+.
+├── build.gradle
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── com
+    │   │       └── coder4
+    │   │           └── lmsia
+    │   │               └── abc
+    │   │                   └── server
+    │   │                       ├── configuration
+    │   │                       │   └── ThriftProcessorConfiguration.java
+    │   │                       ├── LmsiaAbcApplication.java
+    │   │                       ├── rest
+    │   │                       │   ├── controller
+    │   │                       │   │   └── AbcController.java
+    │   │                       │   ├── logic
+    │   │                       │   │   ├── impl
+    │   │                       │   │   │   └── AbcLogicImpl.java
+    │   │                       │   │   └── intf
+    │   │                       │   │       └── AbcLogic.java
+    │   │                       │   └── wrapper
+    │   │                       ├── service
+    │   │                       │   ├── impl
+    │   │                       │   │   └── HelloServiceImpl.java
+    │   │                       │   └── intf
+    │   │                       │       └── HelloService.java
+    │   │                       └── thrift
+    │   │                           └── ThriftServerHandler.java
+    │   └── resources
+    │       ├── application.yaml
+    │       └── logback-spring.xml
+    └── test
+        └── java
+            └── com.coder4.lmsia.abc
+                └── server
+                    └── LmsiaAbcTest.java
+
+```
+
+解释一下文件：
+* RPC服务相关：
+ * 自动配置: 'server.configuration.ThriftProcessorConfiguration'是RPC服务的自动配置，用于自动启动RPC服务，我们后面会对此详细讲解。
+ * RPC入口函数: server.thrift.thrift.ThriftServerHandler定义了RPC的入口函数
+* REST服务：REST服务放在server.rest包下，并进行了进一步分层
+ * Spring MVC: Controller在rest.controller下
+ * REST逻辑: 为了防止Controller过于臃肿，我们将Controller的逻辑都放在了rest.logic中。该包又分为intf和impl，前者是Interface(接口)，后者是Implementation(实现)。
+ * Wrapper: 如果Logic中需要对REST接口进行包装，可以放在wrapper里
+* 业务逻辑: 我们将所有业务逻辑抽象出来，放到server.service下，与Logic类似，也分为intf和impl
+* 配置：
+ * Spring Boot配置：resources/application.yaml是Spring Boot的配置文件，如服务名、数据库配置等
+ * 日志配置：我们使用了默认的logback作为日志系统，配置在resources/logback-spring.xml中
+* 测试用例：test下，与client和common类似，不再赘述。
+
+上述分层看起来有些复杂，但会让各个层次的职责划分的更为清楚，如果你的项目中有更好的方案，也可以采用已有分层结构。
+
 ## job子项目的代码结构
+
+最后，我们看一下job子项目的目录结构：
+
+```shell
+├── build.gradle
+└── src
+    └── main
+        ├── java
+        │   └── com
+        │       └── coder4
+        │           └── lmsia
+        │               └── abc
+        │                   └── job
+        │                       ├── LmsiaAbcJob.java
+        │                       └── LmsiaAbcJobStarter.java
+        └── resources
+            ├── application.yaml
+            └── logback-spring.xml
+
+```
+
+简单解释下：
+* 命令行入口: 本节开篇部分已经提到，job是可执行程序，LmsiaAbcJobStarter即是命令行的入口。
+* 具体job: 这里只有一个LmsiaAbcJob，会通过参数与入口关联，后续会详细讲解。
+
+至此，我们已经对lmsia这个示例项目的Gradle、子项目划分、子项目结构做了较为详尽的讲解。
+
+需要说明的是：由于篇幅先后关系的问题，server子项目我们并未包含数据库、事件处理的相关文件和目录结构，我们会在后续章节视进度逐渐添加。
 
 [^1]：数据来源自官方性能评测[Gradle vs Maven: Performance Comparison](https://gradle.org/gradle-vs-maven-performance/)
