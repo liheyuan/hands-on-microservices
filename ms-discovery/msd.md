@@ -147,7 +147,7 @@ Hello, REST
 如上图所示：
 1. 约定好微服务Service的命名方式
 1. 通过DNS服务获取微服务Service对应的虚拟IP(VIP)
-1. 访问VIP和端口
+1. 访问VIP和端口(3000)
 1. Kubernetes的VIP自动完成了负载均衡，转发到后端Service B的3个节点(Pod/Docker)上
 
 至此，我们借助Kubernetes的Service功能，"近似完美"地实现了服务的注册与发现。
