@@ -1,6 +1,6 @@
 # Summary
 
-* [轻量微服务架构实战](README.md)
+* [轻量级微服务架构实战](README.md)
 * [架构概览](architecture/README.md)
     * [微服务架构概览](architecture/overview.md)
     * [运维技术链概览](architecture/devops.md)
