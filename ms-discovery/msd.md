@@ -140,7 +140,17 @@ Hello, REST
 
 如上所示，通过lmsia-abc-server-service这个域名，就可以成功地访问虚拟IP了。对于ClusterIP的Service，域名的默认组成是'服务名.服务所在命名空间.svc.cluster.集群域名'，或者简单使用`服务名`[^1]，上面例子中我们采用的就是后者。
 
-只需约定好微服务的Service命名方式，就可以轻松地定位到微服务Service的虚拟IP，通过访问虚拟IP，可以自动分发并负载均衡到对应的若干Pod上。至此，我们借助Kubernetes的Service功能，"近似完美"地实现了服务的注册与发现。
+让我们用一张图来回顾下服务发现、负载均衡流程：
+
+![基于Kubernetes的服务发现与负载均衡](./service-discovery.png "基于Kubernetes的服务发现与负载均衡")
+
+如上图所示：
+1. 约定好微服务Service的命名方式
+1. 通过DNS服务获取微服务Service对应的虚拟IP(VIP)
+1. 访问VIP和端口
+1. Kubernetes的VIP自动完成了负载均衡，转发到后端Service B的3个节点(Pod/Docker)上
+
+至此，我们借助Kubernetes的Service功能，"近似完美"地实现了服务的注册与发现。
 
 为什么讲"近似完美"呢？这里还会有一个小坑。熟悉DNS协议的朋友知道，为了提升查询效率，DNS被设计成可以多级缓存的。在Java的JVM虚拟机上，也会进行DNS缓存，但这个缓存有效期默认是-1即永久。这也就意味着，如果我们删除这个Service重新创建，那么虚拟IP的变更将不会自动反馈到相应微服务的JVM中。
 
