@@ -13,7 +13,6 @@
     * [Gradle子项目划分与微服务的代码结构](spring-boot-1/sb-gradle-structure.md)
     * [Spring Boot整合Thrift RPC](spring-boot-1/sb-thrift.md)
     * [Spring Boot整合REST服务](spring-boot-1/sb-rest.md)
-    * [Utils 常用工具类](spring-boot-2/utils.md)
     * [Mockito 单元测试打桩神器](spring-boot-1/sb-mockito.md)
 * [微服务与后台服务整合实战](spring-boot-2/README.md)
     * [Spring Boot整合MySQL数据库](spring-boot-2/sb-mysql.md)
