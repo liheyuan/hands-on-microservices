@@ -31,7 +31,7 @@
     * [Jenkins持续构建实战](ms-delivery/ms-cb.md)
     * [Jenkins持续部署实战](ms-delivery/ms-cd.md)
 * [研发工具链实战](toolchain/README.md)
-    * [LDAP 内部账号管理](toolchain/ldap.md)
+    * [LDAP 内部账号管理系统](toolchain/ldap.md)
     * [gerrit 代码的版本管理与评审](toolchain/gerrit.md)
     * [Nexus 私有maven仓库](toolchain/nexus.md)
     * [BOM 减少版本冲突](toolchain/bom.md)

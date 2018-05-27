@@ -1,4 +1,4 @@
-# 基于LDAP的内部账号管理系统
+# LDAP 内部账号管理系统
 
 ## LDAP及其必要性 
 
@@ -85,10 +85,10 @@ spec:
 * ports: 我们直接对集群外暴露了389和636两个端口。在实际生产中，我建议选择一台独立的物理机部署所有的内部服务(ldap、maven、git等)。为什么这样搞呢？如果物理机是固定的，我们可以给它分配一个固定的办公网IP，甚至固定的办公网DNS域名，然后简单地通过暴露端口的方式，就可以对全部办公网提供服务了。
 * volumeMounts & volumes: 定义了两个volume挂载点，分别挂载到容器的/etc/ldap/slapd.d(配置)和/var/lib/ldap(数据)目录上。对应的物理机挂载目录在/data/openldap/conf和/data/openldap/data上。
 * env: 通过环境变量完成了一些初始化的设定，具体如下。
- # 不用加密协议[^1]
- # 设置域为coder4.com，可以根据你的需求自行更改。
- # 创建系统管理员帐号，密码是admin123，这是一个超级管理员，对应用户名是admin(无法更改)
- # 创建系统只读帐号，用户名和密码是guest/guest123。这主要是用于其他服务与OpenLDAP服务的通信，只能读取、验证信息，不能做任何更改。
+ * 不用加密协议[^1]
+ * 设置域为coder4.com，可以根据你的需求自行更改。
+ * 创建系统管理员帐号，密码是admin123，这是一个超级管理员，对应用户名是admin(无法更改)
+ * 创建系统只读帐号，用户名和密码是guest/guest123。这主要是用于其他服务与OpenLDAP服务的通信，只能读取、验证信息，不能做任何更改。
 
 在部署前，我们先要保证物理机上的挂载点存在。
 ```shell
@@ -103,7 +103,7 @@ kubectl apply -f ./openldap-deployment.yaml
 ```
 
 查看下状态，启动成功了：
-``shell
+```shell
 kubectl get pods
 
 NAME                                           READY     STATUS    RESTARTS   AGE
@@ -171,7 +171,7 @@ slappasswd -h {ssha} -s pass123
 
 我们前面已经提到，LDAP是一个"目录式"的权限管理服务。其本身规则非常复杂到可以单独写一本书:-)
 
-本书不会对其规则进行过多讲解，而是提供了一个模板，大家按照这个模板，就可以轻松添加用户。
+本书不会对其规则进行过多讲解，这里先提供了一个简单的模板，供大家学习。
 
 ./users.ldif
 ```shell
@@ -234,21 +234,21 @@ uniqueMember: cn=lihy,ou=users,dc=coder4,dc=com
 * 将lihy用户加入管理员组内
 
 
-我们添加上述组和用户：
+我们来应用这个模板：
 ```shell
 ldapadd -c -h 192.168.99.100 -p 389 -w admin123 -D "cn=admin,dc=coder4,dc=com" -f ./users.ldif
 ```
 
 如上，需要用admin帐号，-c选项是忽略所有错误，继续执行。
 
-验证一下新增的内部用户，可以成功执行：
+验证一下新增的内部用户：
 ```shell
 ldapwhoami -h 192.168.99.100 -p 389 -D "cn=lihy,ou=users,dc=coder4,dc=com" -w pass123
 
 dn:cn=lihy,ou=users,dc=coder4,dc=com
 ```
 
-将来需要添加新用户时候，需要操作三个步骤：
+添加新用户，需要操作三个步骤：
 1. 在user.idlf中增加用户的定义
 1. 在user.idlf对应属组中添加
 1. 执行ldapadd命令
@@ -259,7 +259,7 @@ dn:cn=lihy,ou=users,dc=coder4,dc=com
 
 面对这种情况，大家可以选用第三方的工具来管理LDAP帐号，例如phpLDAPadmin，但是这需要额外维护一套系统，不免有些笨重。
 
-本书定位轻量级架构，为此，我提供了几个简单的小脚本，用于满足日常的管理工作。
+本书定位轻量级架构，为此，我提供了几个简单的小脚本，以满足日常的管理工作。
 
 添加帐号，ldap_add.sh
 ```shell
@@ -398,8 +398,6 @@ ldapwhoami -h 192.168.99.100 -p 389 -D "cn=zhangsan,ou=users,dc=coder4,dc=com" -
 ldap_bind: Invalid credentials (49)
 ```
 
-至此，我们完成了LDAP服务的构建，也可以通过简单的脚本完成帐号的添删改操作。
-
-关于内部帐号管理系统，我们就介绍到这里。
+至此，我们完成了LDAP服务的构建，并可以通过简单的脚本完成帐号的添删改操作。
 
 [^1]: 如果你十分看中帐号服务对外通信的安全性，建议还是开启，具体可以参考[docker-openldap](https://github.com/osixia/docker-openldap))
