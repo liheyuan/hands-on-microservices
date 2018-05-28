@@ -38,9 +38,10 @@
 
 首先保证物理机上Volume挂载点的创建
 ```shell
-sudo mkdir /data/gerrit
+minikube ssh
 
-sudo chown -R 999:999 /data/gerrit/
+$sudo mkdir /data/gerrit
+$sudo chown -R 999:999 /data/gerrit/
 ```
 
 接着我们看一下deployment文件。
