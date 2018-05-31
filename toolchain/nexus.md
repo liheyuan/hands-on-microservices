@@ -153,3 +153,131 @@ Maven依赖仓库也是分布式，我们最长用的，是"Maven Central"这个
 
 至此，我们成功架设了基于Nexus的Maven私有仓库，集成了LDAP登录，并缓存了Maven中央仓库。
 
+## 如何在Gradle中应用私有仓库
+
+在配置了私有仓库后，我们还需要在微服务项目中启用这个私有仓库。
+
+这大致需要2步
+1. 配置maven私有仓库用户名和密码
+1. build.gradle中配置
+
+下面我们分别看一下
+
+## 配置Maven私有仓库用户名和米按摩
+
+```shell
+vim ~/.m2/settings.xml
+
+# 新增如下内容
+<settings>
+    <servers>
+        <server>
+            <id>nexus_coder4</id>
+            <username>lihy</username>
+            <password>pass</password>
+        </server>
+    </servers>
+    <mirrors>
+        <mirror>
+            <!--This sends everything else to /public -->
+            <id>nexus_coder4</id>
+            <mirrorOf>central</mirrorOf>
+            <url>http://192.168.99.100:8081/content/groups/public</url>
+        </mirror>
+    </mirrors>
+    <profiles>
+        <profile>
+            <id>nexus_coder4</id>
+            <!--Enable snapshots for the built in central repo to direct -->
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>http://192.168.99.100:8081/content/groups/public</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <url>http://192.168.99.100:8081/content/groups/public</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>nexus_coder4</activeProfile>
+    </activeProfiles>
+</settings>
+
+```
+如上，我们新增了私有仓库的地址、用户配置，如果你觉得在文件中直接"裸写"密码不安全，可以参考[maven密码加密方法](https://maven.apache.org/guides/mini/guide-encryption.html#How_to_encrypt_server_passwords)。
+
+下面，我们在build.gradle中配置：
+```build.gradle
+buildscript {
+
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://jitpack.io' }
+    }
+
+    dependencies {
+        // version just for plugin, not important
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+    }
+}
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+    apply plugin: 'org.springframework.boot'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    group = 'com.coder4.lmsia'
+    version = '0.0.1'
+
+    repositories {
+        maven {
+            credentials {
+                username "$mavenUser"
+                password "$mavenPass"
+            }
+            url 'http://192.168.99.100:8081/nexus/content/groups/public'
+        }
+        mavenLocal()
+    }
+
+    // maven deploy config start
+    configurations {
+        deployerJars
+    }
+
+    uploadArchives {
+        repositories.mavenDeployer {
+            configuration = configurations.deployerJars
+            repository(url: "http://192.168.99.100:8081/nexus/content/repositories/releases/") {
+                authentication(userName: "$mavenUser", password: "$mavenPass")
+            }
+            snapshotRepository(url: "http://192.168.99.100:8081/nexus/content/repositories/snapshots/") {
+                authentication(userName: "$mavenUser", password: "$mavenPass")
+            }
+        }
+    }
+
+    // maven deploy config end
+
+}
+```
+
+如上，build.gradle主要进行如下配置:
+# 子项目的仓库，采用私有仓库
+# 子项目发布包时，也发布到私有仓库上
+
+至此，我们成功地将maven私有仓库应用到了gradle的微服务上。
