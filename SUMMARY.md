@@ -37,7 +37,7 @@
     * [BOM 减少版本冲突](toolchain/bom.md)
     * [Spring Boot 项目模板](toolchain/spring-boot-template.md)
     * [开发效率脚本](toolchain/spring-boot-scripts.md)
-    * [Locust 打压工具](toolchain/stress-test.md)
+    * [打压工具](toolchain/stress-test.md)
 * [运维工具链实战](devops/README.md)
     * [Docker 私有仓库](devops/docker-repo.md)
     * [MySQL 数据库搭建](devops/mysql.md)
