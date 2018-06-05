@@ -38,10 +38,15 @@ minikube安装妥当后，让我们来部署第一个Deployment。
 
 首先，启动minikube。第一次启动需要下载ISO镜像，时间较长，请耐心等待一下。
 ```shell
-minikube start
-
-
+minikube start --disk-size 50g --memory 4096 --insecure-registry "192.168.99.0/24"
 ``` 
+
+上述第一次start实际是配置了minikube虚拟机的参数，我们简单解释一下:
+* disk-size 磁盘空间我们给了50g。我们之后会配置私有Maven仓库，需要建立主仓库索引，默认的20g不太够用。
+* memory 内存，给了4G，可以根据你的需求自己设定。
+* insecure-registry 我们之后会搭建不带证书的私有仓库，所以这里预先设置好仓库的IP范围。
+
+提醒一下，上述minikube参数只对第一次启动(实际是创建)生效，一旦虚拟机生成完毕，这些参数的修改都不会生效了。
 
 Kubernetes支持两种操作方式：命令行参数、yaml文件定义。鉴于维护性等角度，我们更推荐推荐后者，即用yaml文件的方式。
 

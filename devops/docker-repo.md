@@ -155,23 +155,29 @@ metadata:
 spec:
   containers:
   - name: lmsia-private-test
-    image: 192.168.99.100:5000/alpine_test  
+    image: 192.168.99.100:5000/alpine_test:test_1.0
   imagePullSecrets:
   - name: regcred
 
 ```
 
 如上，特殊的配置有:
-* 我们在image处增加了私服的前缀
-* 最后增加了imagePullSecrets
+* 我们在image定义之前，增加了私服的前缀
+* 最后增加了刚才配置好的imagePullSecrets
 
 apply之后，可以发现启动成功了。
+```shell
+kubectl get pods
+NAME                                                READY     STATUS    RESTARTS   AGE
+lmsia-docker-registry-deployment-569fd8b594-ldch2   1/1       Running   0          2m
+lmsia-private-test                                  1/1       Running   0          57s
+```
 
-如果启动失败，并且错误原因是:
+提醒一下，如果启动失败，并且错误原因是:
 ```shell
   Warning  Failed                 4s (x2 over 20s)  kubelet, minikube  Failed to pull image "192.168.99.100:5000/alpine_test": rpc error: code = Unknown desc = Error response from daemon: Get https://192.168.99.100:5000/v2/: http: server gave HTTP response to HTTPS client
 ```
 
-请参考这篇文章进行解决[insecure repository in minikube](https://github.com/moby/moby/issues/28321)
+那么，请参考这篇文章进行解决[insecure repository in minikube](https://github.com/kubernetes/minikube/blob/master/docs/insecure_registry.md)
 
 至此，我们完成了Docker私有仓库的搭建和访问。
