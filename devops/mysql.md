@@ -165,7 +165,11 @@ echo "FLUSH PRIVILEGES;"
 
 若微服务的读请求都发往Slave，那么势必也会受到住从复制的延迟影响，特别是对于"写后读"这个场景，可能会导致一些Bug，感兴趣的朋友自行思考如何解决。
 
-下面我们尝试来配置一套住从复制的MySQL。
+MySQL的主从数据同步有几个要点:
+* master和slave机器配置了不同的server-id
+* slave机器通过配置或sql命令设定master的主机名
+
+下面我们尝试在Kubernetes中配置一组主从复制的MySQL服务器。
 
 首先创建master(写库)和slave(读库)的挂载点:
 ```shell
@@ -208,7 +212,7 @@ spec:
       hostname: mysql-writer
       containers:
       - name: mysql-writer-ct
-        image: twang2218/mysql:5.7-replica
+        image: coder4/mysql-replication:8.0
         ports:
         - containerPort: 3306
         volumeMounts:
@@ -217,11 +221,7 @@ spec:
         env:
         - name: "MYSQL_ROOT_PASSWORD"
           value: "root123"
-        - name: "MYSQL_REPLICA_USER"
-          value: "replica"
-        - name: "MYSQL_REPLICA_PASS"
-          value: "replica123"
-        args: ["--log-bin=mysql-bin", "--server-id=1"]
+        args: ["--server-id=1"]
       volumes:
       - name: volume
         hostPath:
@@ -229,9 +229,8 @@ spec:
 ````
 
 如上所述，配置基本与之前的单机MySQL类似，区别是:
-* 换了一个支持主从同步的镜像，twang2218/mysql
+* 使用了一个支持主从同步的镜像，coder4/mysql-replication
 * 主机名、dns配置为mysql-writer
-* MySQL用于主从同步的用户名和密码分别是replica/replica123
 * 服务id是1
 
 应用一下，过一会可以看到启动成功:
@@ -271,7 +270,7 @@ spec:
       hostname: mysql-reader
       containers:
       - name: mysql-reader-ct
-        image: twang2218/mysql:5.7-replica 
+        image: coder4/mysql-replication:8.0
         ports:
         - containerPort: 3306
         volumeMounts:
@@ -280,15 +279,9 @@ spec:
         env:
         - name: "MYSQL_ROOT_PASSWORD"
           value: "root123"
-        - name: "MYSQL_REPLICA_USER"
-          value: "replica"
-        - name: "MYSQL_REPLICA_PASS"
-          value: "replica123"
         - name: "MYSQL_MASTER_SERVER"
           value: "mysql-writer"
-        - name: "MYSQL_MASTER_WAIT_TIME"
-          value: "10"
-        args: ["--log-bin=mysql-bin", "--read-only=1", "--server-id=2"]
+        args: ["--read-only=1", "--server-id=2"]
       volumes:
       - name: volume
         hostPath:
@@ -336,8 +329,13 @@ mysql>
 
 ```
 
-需要特别说明的是，在上述配置下mysql-reader只会同步启动后接收到的binlog，是不会主动启动之前发生的binlog的。
+上述例子只展示了coder4/mysql-replication镜像的部分配置，如果你想启用更多高级配置，可以参考[docker-mysql-replication](https://github.com/liheyuan/docker-mysql-replication)
 
-如果想实现到这一功能，可以手动执行mysqldump来完成。
+MySQL主从同步是一个很有意思的话题，例如:
+* 上述例子中，mysql-reader只会同步启动后接受到的binlog，如何同步启动前mysql-writer的改动呢?
+* 本小节一开始提到的"写后读"问题，能不能通过"写到slave后才算写完成"的方式解决呢?
+* 能否配置多个slave节点呢?
+
+由于篇幅所限，这里不会对上述问题展开讨论，如果你感兴趣，可以在[MySQL Replication官方文档](https://dev.mysql.com/doc/refman/8.0/en/replication.html)中找到答案。
 
 至此，我们已经完成了MySQL的主从配置。
