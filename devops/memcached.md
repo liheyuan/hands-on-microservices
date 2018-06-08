@@ -14,103 +14,82 @@
 Memcached本身是不支持集群的，但通常可以部署多台服务。在访问时，可以根据key的哈希值取模进行分片，然后访问不同的Memcached结点。
 
 ## 集群搭建
-由于Memcached是全内存的，所以无需创建挂载点。我们直接看一下部署文件，如之前所属，我们部署两个memcached结点:
+由于Memcached是全内存的，所以无需创建挂载点。
 
-memcached1-service.yaml:
+在这里，我们没有使用Deployment，而是使用了[StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)。
+
+StatefulSet与Deployment基本相同，唯一的的区别是，前者认为所有副本是相互独立的，而后者认为所有副本是互为冗余的。
+
+对于微服务的应用场景，每个节点都是完全相同的逻辑、连接完全相同的数据库、执行等同的操作，所以我们用的一直是Deployment。
+而对于Memcached，我们会将不同数据分片到不同Memcached结点上，他们是相互独立而不是可替代的，所以我们采用了StatefulSet。
+
+memcached-service.yaml:
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: memcached1
+  name: memcached
 spec:
   ports:
-  - port: 11211 
+  - port: 11211
   selector:
-    app: memcached1 
+    app: memcached
   clusterIP: None
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: memcached1
+  name: memcached
 spec:
   selector:
     matchLabels:
-      app: memcached1
+      app: memcached
+  serviceName: "memcached"
+  replicas: 2
   template:
     metadata:
       labels:
-        app: memcached1
+        app: memcached
     spec:
       restartPolicy: Always
-      hostname: memcached1
+      hostname: memcached
       containers:
-      - name: memcached1-ct
+      - name: memcached-ct
         image: memcached:1.5-alpine
         ports:
-        - containerPort: 11211 
+        - containerPort: 11211
         args: ["memcached", "-m", "256"]
+
 ```
 
-上面只有一处要说明下，我们限定了内存使用为256m，下面我们再创建另一个memcached结点,memcached2-service.yaml:
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: memcached2
-spec:
-  ports:
-  - port: 11211 
-  selector:
-    app: memcached2 
-  clusterIP: None
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: memcached2
-spec:
-  selector:
-    matchLabels:
-      app: memcached2
-  template:
-    metadata:
-      labels:
-        app: memcached2
-    spec:
-      restartPolicy: Always
-      hostname: memcached2
-      containers:
-      - name: memcached2-ct
-        image: memcached:1.5-alpine
-        ports:
-        - containerPort: 11211 
-        args: ["memcached", "-m", "256"]
-```
+简单说明下:
+* 我们声明了StatefulSet为memcached，2个独立节点
+* 限定了内存使用为256m
 
-分别启动下:
+启动下:
 ```shell
-kubectl apply -f memcached1-service.yaml
-kubectl apply -f memcached2-service.yaml
+kubectl apply -f memcached-service.yaml
 ```
 
 然后我们登录一个额外的docker上，尝试ping一下，是可以的，说明启动成功:
 ```shell
 
-ping memcached1
+ping memcached-0.memcached
 PING memcached1 (172.17.0.8): 56 data bytes
 64 bytes from 172.17.0.8: seq=0 ttl=64 time=1.014 ms
 64 bytes from 172.17.0.8: seq=1 ttl=64 time=0.138 ms
 64 bytes from 172.17.0.8: seq=2 ttl=64 time=0.134 ms
 
 
-ping memcached2
+ping memcached-1.memcached
 PING memcached2 (172.17.0.9): 56 data bytes
 64 bytes from 172.17.0.9: seq=0 ttl=64 time=0.076 ms
 64 bytes from 172.17.0.9: seq=1 ttl=64 time=0.123 ms
 64 bytes from 172.17.0.9: seq=2 ttl=64 time=0.119 ms
 
 ```
+
+注意上面对不同节点的DNS域名为"statefulName-x"."serviceName"
 
 Memcached的配置看起来很简单，但是分片策略还需要进一步思考。
 

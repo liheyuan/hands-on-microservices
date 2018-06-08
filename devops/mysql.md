@@ -66,7 +66,7 @@ spec:
 ```
 
 上面的部署yaml与之前的类似，只解释几点:
-* clusterIP设置为None将不再启动单独的VIP，而是让dns直接解析到Pod的IP上
+* 上述实际启动了一个"Headless"Service，即将clusterIP设置为None。此时将不再启动单独的VIP，而是让dns直接解析到Pod的IP上
 * MySQL的存储数据量较大，一般固定在某台物理机上，不会主动迁移。例如这里我们选择了minikube。
 * MYSQL_ROOT_PASSWORD是root的管理员密码，但root默认只允许本机登录。
 
