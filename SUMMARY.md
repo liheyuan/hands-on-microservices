@@ -43,6 +43,7 @@
     * [MySQL 数据库](devops/mysql.md)
     * [Memcached 缓存](devops/memcached.md)
     * [Redis 内存数据库](devops/redis.md)
+    * [RabbitMQ 消息队列](devops/rabbitmq.md)
     * [Kafka 消息队列](devops/kafka.md)
     * [Nginx REST 网关自动配置](devops/discovery.md)
     * [线上日志收集](devops/log-collect.md)
