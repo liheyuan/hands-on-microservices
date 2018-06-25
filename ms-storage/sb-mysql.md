@@ -9,8 +9,8 @@
 * MyBatis集成
 
 使用过Spring框架开发的同学，可能对后两种比较熟悉。但是这两种方法过于重量级，本书将专注于前两种，其中：
-* Jdbc Template需要直接编写SQL语句，更加接近数据库底层，比较灵活，但缺点是代码冗余、开发效率低。
-* Spring Data JPA可以自动生成部分参数、解析结果的语句，开发效率高，缺点是有一定的代码侵入性、不够灵活。
+* Jdbc Template需要直接编写SQL语句，更加接近数据库底层，开发效率低、性能高。
+* Spring Data JPA可以自动生成部分参数、解析结果的语句，开发效率高，性能低一些。
 上述两种方法各有优略，大家可以根据实际情况作出选择。
 
 ## 数据源配置
@@ -299,6 +299,19 @@ JpaRepository提供的都是较为基础的操作，有事无法完全满足我�
 
 如上所示，我们通过@Query注解实现了通过指定SQL查找最新注册的用户。
 
-关于JPA的更多用法可以参考[Spring JPA官方文档](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)。
+## 小结
 
-本小节介绍了在Spring Boot中集成数据库的两种方式：JdbcTemplate较为底层，灵活、侵入性低；JPA开发效率高但有一定侵入性。大家可以根据实际的项目需要，自行选择。
+在本小节中，我们首先介绍了Sping Boot中MySQL数据源的配置，随后，介绍了如何配置多个数据源并手动注入DataSource、JdbcTemplate。
+
+接下来，我们介绍了两种数据库操作方法:
+* JdbcTemplate更接近数据库底层，需要编写较多代码，性能较好
+* Spring JPA Data可以自动生成部分代码，开发效率高，性能稍差，且对POJO具有一定的侵入性
+
+上述两种方法各有优劣，大家可以根据实际需求进行选择。
+
+## 拓展阅读
+
+1. Tomcat数据库连接池的详细配置参数可以参考[官方参数文档](https://tomcat.apache.org/tomcat-8.0-doc/jdbc-pool.html#Common_Attributes)
+1. Spring JPA Data更详细的用法可以参考[Spring JPA Data官方文档](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
+1. Spring JDBC更详细的用法可以参考[Spring JDBC官方文档](https://docs.spring.io/spring/docs/current/spring-framework-reference/data-access.html)
+

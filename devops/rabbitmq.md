@@ -206,9 +206,9 @@ spec:
 ```
 
 解释一下上面的描述文件：
-# 创建了Headless Service用于暴露管理界面的Web端口31672。这里主要是为了演示，在实际应用中，这个可能是没必要的。
-# 创建了rabbitmq的StatefulSet，含有3个节点，其中每个节点通过livenessProbe和readinessProbe检查可用性。 
-# 使用volumeClaimTemplates自动生成volumeClaim，这里的template即模板，会自动给StatefulSet中的每一个节点创建一个Volume Claim，命名为rabbitmq-pvc-0/1/2 
+* 创建了Headless Service用于暴露管理界面的Web端口31672。这里主要是为了演示，在实际应用中，这个可能是没必要的。
+* 创建了rabbitmq的StatefulSet，含有3个节点，其中每个节点通过livenessProbe和readinessProbe检查可用性。 
+* 使用volumeClaimTemplates自动生成volumeClaim，这里的template即模板，会自动给StatefulSet中的每一个节点创建一个Volume Claim，命名为rabbitmq-pvc-0/1/2 
 
 下面我们来应用下上面的描述:
 ```
@@ -228,11 +228,11 @@ statefulset.apps "rabbitmq" created
 ## 配置镜像集群
 
 下面，我们来配置镜像策略，在Web管理工具上点击"Admin" -> "Policies" -> "Add / update a policy"，如下填写:
-# Name: ha_mirror_queue
-# Pattern: ^ 
-# Apply to: All exchange and queues
-# Defination: 
- # ha-mode:  all
+* Name: ha_mirror_queue
+* Pattern: ^ 
+* Apply to: All exchange and queues
+* Defination: 
+ * ha-mode:  all
 天下好后点击"Add"
 
 配置好后，我们尝试创建一个Queue，在Web管理工具点击"Queues" -> "Add queue"，name写test，其他保持默认，最后点击"Add queue"。

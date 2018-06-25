@@ -13,13 +13,14 @@
 Memcached本身是不支持集群的，但通常可以部署多台服务。在访问时，可以根据key的哈希值取模进行分片，然后访问不同的Memcached结点。
 
 ## 集群搭建
-由于Memcached是全内存的，所以无需创建挂载点。
+由于Memcached是全内存的，所以无需创建Volume挂载点。
 
 在这里，我们没有使用Deployment，而是使用了[StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)。
 
 StatefulSet与Deployment基本相同，唯一的的区别是，前者认为所有副本是相互独立的，而后者认为所有副本是互为冗余的。
 
 对于微服务的应用场景，每个节点都是完全相同的逻辑、连接完全相同的数据库、执行等同的操作，所以我们用的一直是Deployment。
+
 而对于Memcached，我们会将不同数据分片到不同Memcached结点上，他们是相互独立而不是可替代的，所以我们采用了StatefulSet。
 
 memcached-service.yaml:
@@ -99,6 +100,7 @@ Memcached的配置看起来很简单，但是分片策略还需要进一步思�
 想解决这类问题，可以采用[一致性哈系](http://www.cnblogs.com/RockLi/p/3530176.html)，它可以尽可能地减少机器变动后，造成的数据重分布。
 
 Memcached的日常运维比较简单，常见的操作就是清空全部缓存，可以通过nc指令来完成:
+
 ```shell
 echo 'flush_all' | nc memcached1 11211
 
@@ -107,7 +109,9 @@ OK
 
 提醒一下，线上执行清空操作要非常谨慎，若系统性能严重依赖缓存，那么清空操作往往会导致缓存击穿并造成系统故障。
 
-至此，我们完成了Memcached的运维搭建工作。
+## 小结
+
+本节，我们使用StatefulSet，完成了Memcached集群的运维，并介绍了Memcahced集群运维中常见的问题。
 
 [^1]: [Memcached性能评测数据](https://github.com/scylladb/seastar/wiki/Memcached-Benchmark)
 [^2]: 分为空间局部性和时间局部性，可参考[局部性原理浅析](https://www.cnblogs.com/yanlingyin/archive/2012/02/11/2347116.html)
