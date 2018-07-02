@@ -342,6 +342,8 @@ redis-cli -h localhost -p 26379
 ## 拓展阅读
 
 1. 在小结中，我们提到了Sentinel模式会造成一定的资源浪费。可以采用[Redis Cluster](https://redis.io/topics/cluster-tutorial)的部署模式，在保证高可用的同时，资源利用率。
+1. 为了保证高性能，Redis采用异步持久话的方式，分为rdb和aof两种，需要根据实际情况，选择适合的一种甚至混合方案。具体可参见文档（https://redis.io/topics/persistence）
+1. 若采用aof方式，积累较多修改后，重启redis会非常慢，可以定期进行[aof rewrite](https://redis.io/commands/bgrewriteaof)压缩aof日志。
 
 [^1]: 若要维持较高性能，建议保留足够的内存以存储全部数据。
 
