@@ -128,9 +128,9 @@ vm.max_map_count < 262144
 
 ```
 
-这种情况，可以更改宿主机（物理机）的配置：
+这种情况，可以使用具有sudo权限的帐号，更改宿主机（物理机）的配置：
 ```yaml
-sudo  sysctl -w vm.max_map_count=262144
+sudo sysctl -w vm.max_map_count=262144
 ```
 
 再次启动一下，可以发现启动成功：
