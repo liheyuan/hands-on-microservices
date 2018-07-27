@@ -29,7 +29,7 @@
     * [Kafka 流处理平台的运维](ms-msgq/kafka-devops.md)
     * [Kafka 流处理开发简介](ms-msgq/dev-kafka.md)
 * [微服务日志监控实战](ms-log/README.md)
-    * [Spring Boot配置logback日志](ms-log/sb-logback.md)
+    * [Spring Boot配置Logback日志](ms-log/sb-logback.md)
     * [Spring Boot整合分布式追踪](ms-log/sb-trace.md)
     * [ELK日志分析平台的运维](ms-log/elk-devops.md)
     * [Spring Boot整合EBLK日志分析平台](ms-log/sb-eblk.md)
