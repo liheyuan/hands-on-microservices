@@ -52,11 +52,8 @@
     * [打压工具](toolchain/stress-test.md)
 * [运维工具链实战](devops/README.md)
     * [Docker 私有仓库](devops/docker-repo.md)
-    * [RabbitMQ 消息队列](devops/rabbitmq.md)
     * [Nginx REST 网关自动配置](devops/discovery.md)
-    * [线上日志收集](devops/log-collect.md)
-    * [Sentry 服务异常监控平台](devops/sentry.md)
-    * [Prometheus + Grafana 打造监控平台](devops/prometheus-grafana.md)
+    * [OpenVPN 访问Kubernetes集群内网](devops/openvpn-k8s.md)
     * [OpenVPN + NAT 打通办公网与IDC](devops/openvpn-nat.md)
     * [线上跳板机](devops/jump-server.md)
 
