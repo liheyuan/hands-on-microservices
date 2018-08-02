@@ -53,7 +53,7 @@
 * [运维工具链实战](devops/README.md)
     * [Docker 私有仓库](devops/docker-repo.md)
     * [Nginx REST 网关自动配置](devops/discovery.md)
-    * [OpenVPN 访问Kubernetes集群内网](devops/openvpn-k8s.md)
-    * [OpenVPN + NAT 打通办公网与IDC](devops/openvpn-nat.md)
+    * [搭建Kubernetes集群](devops/k8s-cluster.md)
+    * [OpenVPN访问Kubernetes集群内网](devops/openvpn-k8s.md)
     * [线上跳板机](devops/jump-server.md)
 
