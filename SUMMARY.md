@@ -34,6 +34,7 @@
     * [ELK日志分析平台的运维](ms-log/elk-devops.md)
     * [Spring Boot整合EBLK日志分析平台](ms-log/sb-eblk.md)
 * [微服务监控实战](ms-monitor/README.md)
+    * [Sentry 错误预警系统的运维](ms-monitor/sentry-devops.md)
     * [Spring Boot整合Sentry](ms-monitor/sb-sentry.md)
     * [Kubernetes + Prometheus + Grafana平台监控实战](ms-monitor/k8s-prometheus-grafana.md)
 * [微服务配置中心实战](spring-boot-4/README.md)
