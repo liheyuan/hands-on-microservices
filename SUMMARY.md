@@ -40,6 +40,7 @@
 * [微服务配置中心实战](spring-boot-4/README.md)
 * [微服务容错限流实战](spring-boot-5/README.md)
 * [微服务持续交付实战](ms-delivery/README.md)
+    * [Jenkins构建平台的运维](ms-delivery/jenkins-devops.md)
     * [Jenkins持续构建实战](ms-delivery/ms-cb.md)
     * [Jenkins持续部署实战](ms-delivery/ms-cd.md)
 * [研发工具链实战](toolchain/README.md)
