@@ -14,7 +14,7 @@
 * Gradle编译项目
 * 打包Docker镜像
 
-## 构建Salve打包机
+## 部署Salve打包机
 
 在持续构建的过程中，需要迁出代码、编译、打Docker镜像等步骤，如果都放在Jenkins的容器内执行，存在一些缺点：
 * 影响Jenkins主服务性能。编译、打镜像都是非常耗费系统资源的操作。如果放到Jenkins上执行，势必会影响服务的流畅性和稳定性。
@@ -68,6 +68,9 @@ RUN set -o errexit -o nounset \
 	&& rm gradle.zip \
 	&& mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
 	&& ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle
+
+# git
+RUN apt-get install -y git
 
 # Create User
 RUN useradd -m build 
@@ -124,3 +127,58 @@ docker run \
 * Availability 尽量让slave在线
 
 配置成功默认是离线的，稍等一会，会提示"slave已经上线"。
+
+## 持续集成第一步:迁出代码、编译
+
+本节开篇已经提到，持续集成的第一步即从代码仓库中迁出代码，我们来完成这项工作。
+
+首先在gerrit上准备一个项目，假设为lmsia-xyz，这是一个最简单的Spring Boot项目。
+
+为了能够提交、迁出代码，需要将公钥配置到gerrit上，点击右上角的名字 -> Setting -> SSH Public Keys，填入即可完成。
+
+准备好项目后，我们在Jenkins上新建一个"Freestyle"项目，命名为lmsia-xyz-build。
+
+首先配置代码仓库，如下图所示：
+
+![Jenkins配置Gerrit权限](./jenkins-gerrit.png)
+
+* 在"Source Code Management"中，选择"Git"，并填写gerrit的repo地址
+* Credentials中新增一个用户，为gerrit中的用户，要填写私钥
+
+此外，还要限制只能在slave上执行: Restrict where this project can be run中设置"slave"。
+
+完成后点击底部的Save。
+
+配置好后，我们执行第一次Build，在项目左侧菜单选择"Build Now"，可以在Log中查看输出如下:
+```
+Building remotely on slave in workspace /home/build/workspace/lmsia-xyz-build
+Cloning the remote Git repository
+Cloning repository ssh://lihy@10.1.64.72:29418/lmsia-xyz
+ > git init /home/build/workspace/lmsia-xyz-build # timeout=10
+Fetching upstream changes from ssh://lihy@10.1.64.72:29418/lmsia-xyz
+ > git --version # timeout=10
+using GIT_SSH to set credentials 
+ > git fetch --tags --progress ssh://lihy@10.1.64.72:29418/lmsia-xyz +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url ssh://lihy@10.1.64.72:29418/lmsia-xyz # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url ssh://lihy@10.1.64.72:29418/lmsia-xyz # timeout=10
+Fetching upstream changes from ssh://lihy@10.1.64.72:29418/lmsia-xyz
+using GIT_SSH to set credentials 
+ > git fetch --tags --progress ssh://lihy@10.1.64.72:29418/lmsia-xyz +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision eab8a79ff6cde375c017b6f9eec29dff02a0bb85 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f eab8a79ff6cde375c017b6f9eec29dff02a0bb85
+Commit message: "MOD: init commit"
+First time build. Skipping changelog.
+Finished: SUCCESS
+```
+
+如上所示，我们成功地从代码仓库迁出了代码，第一步顺利完成！
+
+在迁出代码后，我们需要进行编译，回到lmsia-xyz-build项目的配置中，找到Build选项，新增一个"Execute shell"步骤，命令输入"gradle build"，点击底部"Save"。
+
+再次执行"Build Now"，发现项目依然执行成功，查看日志，可以发现编译也成功地执行了！
+
+至此，我们已经完成了代码的迁出和编译。
