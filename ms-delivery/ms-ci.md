@@ -32,9 +32,14 @@ Slave打包机可以采用物理机、虚拟机或者容器，这里我们选择
 ```shell
 FROM ubuntu:18.04
 
-# Basic
+# apt-add-repostory zip unzip git
 RUN apt-get update
-RUN apt-get install -y software-properties-common 
+RUN apt-get install -y apt-utils software-properties-common zip unzip git
+
+# SSH
+RUN apt-get install -y openssh-server \
+    && mkdir /var/run/sshd \
+    && sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 
 # Java
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
@@ -43,14 +48,6 @@ RUN \
   add-apt-repository -y ppa:webupd8team/java && \
   apt-get update && \
   apt-get install -y oracle-java8-installer
-
-# SSH
-RUN apt-get install -y openssh-server \
-    && mkdir /var/run/sshd \
-    && sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
-
-# Unzip
-RUN apt-get install -y unzip
 
 # Gradle
 ENV GRADLE_HOME /opt/gradle
@@ -69,19 +66,33 @@ RUN set -o errexit -o nounset \
 	&& mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
 	&& ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle
 
-# git
-RUN apt-get install -y git
-
 # Create User
 RUN useradd -m build 
 RUN echo "build:build123" | chpasswd
 
+# Docker ce
+RUN apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+RUN add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) \
+    stable"
+RUN apt-get install -y docker-ce
+RUN usermod -aG docker build
+
 # Clean
-RUN apt-get clean && \
+RUN apt-get remove -y apt-utils software-properties-common && \
+    apt-get autoremove -y && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/oracle-jdk8-installer
 
 EXPOSE 22
 
+# SSH Daemon
 CMD ["/usr/sbin/sshd", "-D"]
 
 ```
@@ -91,6 +102,7 @@ CMD ["/usr/sbin/sshd", "-D"]
 * SSHD服务的安装
 * Gradle 4.10的安装
 * build用户(密码build123)的配置
+* Docker的安装和配置(这里是Docker inside Docker，我们只安装可执行文件，通过volulme映射使用物理机的docker)
 
 有了上述镜像后，我们启动这个slave容器:
 ```shell
@@ -105,6 +117,7 @@ NAME="slave"
 docker ps -q -a --filter "name=$NAME" | xargs -I {} docker rm -f {}
 docker run \
     --name $NAME \
+    -v /var/run/docker.sock:/var/run/docker.sock \
     -p 22 \
     --detach \
     --restart always \
@@ -182,3 +195,5 @@ Finished: SUCCESS
 再次执行"Build Now"，发现项目依然执行成功，查看日志，可以发现编译也成功地执行了！
 
 至此，我们已经完成了代码的迁出和编译。
+
+## 打包镜像并上出到私有仓库

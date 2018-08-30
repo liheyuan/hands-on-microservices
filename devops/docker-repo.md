@@ -183,4 +183,4 @@ lmsia-private-test                                  1/1       Running   0       
 至此，我们完成了Docker私有仓库的搭建和访问。
 
 ## 思考与拓展
-* 在Docker Registry2后，默认强制采用加密认证方式，请结合[这篇文章](http://tech.paulcz.net/2016/01/deploying-a-secure-docker-registry/)，将私有仓库的部署改为加密方式。
+* 在Docker Registry 2后，默认强制采用加密认证方式，请结合[这篇文章](http://tech.paulcz.net/2016/01/deploying-a-secure-docker-registry/)，将私有仓库的部署改为加密方式。
