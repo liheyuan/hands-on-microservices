@@ -197,3 +197,80 @@ Finished: SUCCESS
 至此，我们已经完成了代码的迁出和编译。
 
 ## 打包镜像并上出到私有仓库
+
+在lmsia-xyz-build项目中新建一个Shell步骤，内容如下:
+```
+$HOME/ms2docker.sh
+```
+
+上述脚本需要添加到slave的镜像中，直接COPY即可，这里不再赘述。
+
+脚本内容如下：
+```shell
+#!/bin/bash
+set -e
+
+# Const
+DOCKER_REGISTRY="10.1.64.72"
+PROJECT_VERSION=${BUILD_NUMBER:-1}
+PROJECT_NAME=$(basename `pwd`| sed -r 's/-build$//g')
+SERVER_NAME="$PROJECT_NAME-server"
+JAR_NAME="$SERVER_NAME.jar"
+DOCKER_FULLNAME="$PROJECT_NAME:$PROJECT_VERSION"
+
+# Copy Jar
+find . -name "$SERVER_NAME*.jar" -exec cp {} ./$JAR_NAME \;
+
+# Generate Dockerfile
+cat > ./Dockerfile <<EOF
+FROM anapsix/alpine-java:8_server-jre
+
+VOLUME /tmp /app
+WORKDIR /app
+EXPOSE 8080 3000
+COPY ${JAR_NAME} /app
+CMD ["java", "-jar", "/app/${JAR_NAME}"]
+
+EOF
+
+# Build
+docker build .
+docker build -t $PROJECT_NAME .
+docker tag $PROJECT_NAME $DOCKER_REGISTRY/$DOCKER_FULLNAME
+docker push $DOCKER_REGISTRY/$DOCKER_FULLNAME
+
+```
+
+简单解释一下:
+* 首先获得项目名称(根据当前执行的工作文件夹)
+* 查找生成的server.jar，并拷贝到当前目录
+* 编译一个Docker的镜像，包含Java环境和server的jar包
+* 上传Docker镜像到私有仓库
+
+在Jenkins配置好后，点击保存，重新打包。
+
+看一下结果:
+```
+....
+The push refers to repository [10.1.64.72/lmsia-xyz]
+ce4c6e84ae9a: Preparing
+c24b758e34d0: Preparing
+c28e906f67c9: Preparing
+cd7100a72410: Preparing
+c28e906f67c9: Layer already exists
+c24b758e34d0: Layer already exists
+cd7100a72410: Layer already exists
+ce4c6e84ae9a: Pushed
+6: digest: sha256:86ccfb07945bdaf61c90470e3302774cde31d41b6c1a26647ea92fdb681536b3 size: 1158
+Finished: SUCCESS
+```
+
+如上所述，已经成功地打好Docker镜像并上传到私有仓库中。
+
+至此，我们经完成了持续集成的所有步骤，它包含:
+* 从gerrit上迁出代码到本地(slave机器)
+* 调用gradle编译
+* 使用Docker打镜像并上传到私有仓库
+
+## 拓展与思考
+* 在开发过程中，微服务会频繁的打包、持续集成。这会产生大量历史镜像文件，这些历史版本并不会被使用，却浪费了大量的磁盘空间。请自行查找资料，实现"只保留最近3个最新项目镜像"这一功能。
