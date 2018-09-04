@@ -67,6 +67,7 @@ cat /var/jenkins_home/secrets/initialAdminPassword
  * SSH Agent
  * Timestamper 
  * Workspace Cleanup 
+ * Active Choice
 * Build Tools
  * Gradle
 * Pipelines and Continuous Delivery
