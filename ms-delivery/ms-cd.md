@@ -52,3 +52,79 @@ return object.tags.sort { a, b -> b.compareToIgnoreCase a }
 
 ![正常展示了版本列表](./jenkins-deploy-version.png)
 
+## 新增远程主机
+
+前面已经提到，我们将直接登录到k8s的主节点来执行部署命令。
+
+为了实现这一点，首先要将该机器添加到Jenkins的SSH Site中。
+
+用管理员帐号登录 -> Manage Jenkins -> Configure System, 找到SSH Site添加如下:
+
+![配置远程执行主机](./jenkins-ssh-succ.png)
+
+除了配置主机名、端口外，记得选择一个已经配置好的SSH私钥，这需要提前到Jenkins的Credentials中配置好。
+
+接着我们回到lmsia-xyz-deploy项目，在Build环节新建一个"Execute script on remote host using ssh"
+
+* SSH Site选择刚才配置好的主机
+* Command里设置为"/home/coder4/deploy2k8s.sh $JOB_NAME $IMG_VERSION"
+
+其中deploy2k8s.sh需要部署在这台远程的/home/coder4目录下（根据你的情况可自行更改），内容为:
+```bash
+#!/bin/bash
+set -e
+
+if [ x"$#" != x"2" ];then
+    echo "Usage $0 proj_name img_version"
+    exit -1
+fi
+
+# Const
+DOCKER_REGISTRY="10.1.64.72"
+PROJECT_NAME=$1
+IMAGE_NAME=$(echo $PROJECT_NAME | sed -r 's/-deploy$//g')
+IMAGE_VERSION=$2
+
+# Generate yaml 
+cat > ./deployment.yaml <<EOF
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $IMAGE_NAME-deployment
+spec:
+  selector:
+    matchLabels:
+      app: $IMAGE_NAME 
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: $IMAGE_NAME
+    spec:
+      containers:
+      - name: $IMAGE_NAME-ct
+        image: $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_VERSION
+        ports:
+        - containerPort: 8080
+        - containerPort: 3000
+
+EOF
+
+# Deploy 
+kubectl apply -f ./deployment.yaml
+
+```
+
+上述代码完成如下功能:
+* 获取镜像名称和本次要上线的镜像版本
+* 生成deployment模板
+* 调用kubectl 部署
+
+至于重启服务和停止服务，我们作为思考题，交给读者来实现。
+
+至此，我们完成了持续部署的工作。
+
+## 拓展与思考
+1. 微服务的持续部署，除了部署更新版本，还需要停止或者重启，如何实现这一点，请结合本书介绍的内容，结合网上的其他资料，自行实战。
+1. 上述模板只是简单的部署，如果需要实践前面章节介绍的微服务发现模型，需要进行哪些修改呢？
