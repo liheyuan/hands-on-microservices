@@ -39,6 +39,7 @@
     * [Kubernetes + Prometheus + Grafana平台监控实战](ms-monitor/k8s-prometheus-grafana.md)
 * [微服务配置中心实战](ms-config/README.md)
     * [cfg4j及方案简介](ms-config/cfg4j.md)
+    * [Spring Boot整合配置中心](ms-config/sb-config.md)
 * [微服务容错限流实战](spring-boot-5/README.md)
 * [微服务持续交付实战](ms-delivery/README.md)
     * [Jenkins平台的运维](ms-delivery/jenkins-devops.md)
