@@ -1,4 +1,4 @@
-# Kubernetes + Prometheus + Grafana监控平台实战
+# Kubernetes + Prometheus + Grafana监控平台
 
 平台监控是微服务架构中的重要一环。
 
@@ -17,7 +17,7 @@
 
 对于监控平台，已经有很多优秀的开源解决方案，例如传统的Zabbix、Nagios，但这些系统比较复杂，一般需要较为专业的运维人员才能上手。
 
-在本书的实战中，我们采用较为轻量级的Prometheus + Grafana实现监控平台。
+本书选用较为轻量级的Prometheus + Grafana实现监控平台。
 
 Prometheus是一款开源的性能监控、预警系统，他的特点有：
 * 多维数据源、时间聚合
