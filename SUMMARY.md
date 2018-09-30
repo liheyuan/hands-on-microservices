@@ -1,6 +1,6 @@
 # Summary
 
-* [从0到1实现微服务架构](README.md)
+* [从0到1实战微服务架构](README.md)
 * [架构概览](architecture/README.md)
     * [微服务架构概览](architecture/overview.md)
     * [运维技术链概览](architecture/devops.md)
@@ -40,7 +40,7 @@
 * [微服务配置中心](ms-config/README.md)
     * [cfg4j及方案简介](ms-config/cfg4j.md)
     * [Spring Boot整合配置中心](ms-config/sb-config.md)
-* [微服务容熔与限流](ms-circuit-breaker-and-limit/README.md)
+* [微服务熔断与限流](ms-circuit-breaker-and-limit/README.md)
     * [熔断与Hystrix](ms-circuit-breaker-and-limit/sb-hystrix.md)
     * [限流的实现](ms-circuit-breaker-and-limit/sb-limit.md)
 * [微服务持续交付](ms-delivery/README.md)
