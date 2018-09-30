@@ -46,6 +46,10 @@
 
 这些代码以研讨为主要目的，也可以直接应用于生产，但本人不对其稳定性负责。
 
+## 在线阅读地址
+
+在线阅读: [从0到1实战微服务架构](https://coder4.com/homs_online/)
+
 ## 版权
 
 本书虽然在github上公开写作，但版权归本人[Coder4](https://coder4.com)所有。
@@ -53,3 +57,4 @@
 依照 [署名-非商业性使用-相同方式共享](https://creativecommons.org/licenses/by-nc-sa/2.5/cn/) ，任何人可以在保留署名的情况下转载。但严禁用于商业用途。
 
 This is a book powered by [GitBook](https://github.com/GitbookIO/gitbook).
+
