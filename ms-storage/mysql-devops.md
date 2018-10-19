@@ -1,4 +1,4 @@
-# MySQL数据库
+# MySQL数据库的运维
 
 近几年，以"Redis"、"MongoDB"为代表的"NoSQL"数据库迅速崛起。"NoSQL"并不是"没有SQL"而是"Not Only SQL"。在特定场景下，NoSQL数据库确实解决了一些问题，例如：
 

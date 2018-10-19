@@ -1,4 +1,4 @@
-# Spring Boot整合MySQL之JDBC
+# Spring Boot整合MySQL
 
 经过上一节的讨论，相信你已经有了一套可运维的MySQL服务器了，接下来的两节，我们来讨论如何在Spring Boot中整合MySQL。
 
