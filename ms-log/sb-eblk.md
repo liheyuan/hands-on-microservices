@@ -152,11 +152,7 @@ metadata:
 * filter对输入的beat事件进行解析。这里使用了grok插件，具体的语法可以参考[官方grok插件介绍](https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html)
 * output输出到elasticsearch，这里没有变化
 
-我们重启Logstash和FileBeat后，尝试向FileBeat的Docker中写入几行日志，稍等几秒，打开Kibana：
-
-![接入了FileBeat后的Kibana](./kibana-filebeat.png "接入了FileBeat后的Kibana")
-
-可以发现，日志已经可以检索到了。
+我们重启Logstash和FileBeat后，尝试向FileBeat的Docker中写入几行日志，稍等几秒，打开Kibana，可以发现，日志已经可以检索到了。
 
 ## 将FileBeat与Spring Boot进行整合
 
