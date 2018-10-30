@@ -154,6 +154,8 @@ metadata:
 
 我们重启Logstash和FileBeat后，尝试向FileBeat的Docker中写入几行日志，稍等几秒，打开Kibana，可以发现，日志已经可以检索到了。
 
+![接入了FileBeat后的Kibana](./kibana-filebeat.png "接入了FileBeat后的Kibana")
+
 ## 将FileBeat与Spring Boot进行整合
 
 前面已经提到，微服务数量、副本数众多、遍布在集群的各个物理机上，日志收集、汇总起来非常麻烦，所以一般来说，需要使用边车模式，即一个微服务伴随一个日志收集器(FileBeat)。
