@@ -143,7 +143,7 @@ DB_NAME=$1
 DB_USER="lmsia"
 DB_PASS="pass"
 
-echo "CREATE DATABASE IF NOT EXISTS $DB_NAME DEFAULT CHARSET utf8 COLLATE utf8_general_ci;"
+echo "CREATE DATABASE IF NOT EXISTS $DB_NAME DEFAULT CHARSET utf8mb4;"
 echo "CREATE USER $DB_USER IDENTIFIED by '$DB_PASS';"
 echo "GRANT ALL PRIVILEGES ON $DB_NAME.* to $DB_USER;"
 echo "FLUSH PRIVILEGES;"
@@ -151,7 +151,7 @@ echo "FLUSH PRIVILEGES;"
 ```
 
 在上述脚本中，会自动生成如下语句:
-* 建库(编码utf8)
+* 建库(编码utf8mb4)
 * 建用户，并分配到上述库
 
 注意:脚本里的密码给的是固定的"pass"，在实际生产环境，应当使用随机密码。
@@ -329,7 +329,7 @@ kubectl apply -f ./mysql-reader-service.yaml
 
 (这里省略登录mysql-writer的过程，具体参照本节第一部分)
 ```sql
-CREATE DATABASE IF NOT EXISTS lmsia_user DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS lmsia_user DEFAULT CHARSET utf8mb4;
 CREATE USER lmsia IDENTIFIED by 'pass';
 GRANT ALL PRIVILEGES ON lmsia_user.* to lmsia;
 FLUSH PRIVILEGES;
