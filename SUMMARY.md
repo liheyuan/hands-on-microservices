@@ -7,7 +7,7 @@
     * [微服务技术栈概览](architecture/microservics.md)
     * [研发工具链概览](architecture/toolchain.md)
 * [微服务的自动发现与负载均衡](ms-discovery/README.md)
-    * [容器与Kubernetes简介](ms-discovery/docker-k8s.md)
+    * [集装箱、容器化、容器编排](ms-discovery/docker-k8s.md)
     * [Kubernetes 快速入门](ms-discovery/k8s-intro.md)
     * [微服务的自动发现与负载均衡](ms-discovery/msd.md)
 * [微服务的开发框架](spring-boot/README.md)

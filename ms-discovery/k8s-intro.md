@@ -1,6 +1,6 @@
 # Kubernetes 快速入门
 
-## Kubernetes中的操作单元
+## Kubernetes中的基本操作单元
 
 为了适应复杂的业务需求，Kubernetes中内置了不同层级的操作单元：
 * Pod: Pod是Kubernetes的基本操作单元，也是应用运行的载体。如果你了解Docker的话，可以理解为Pod = 若干紧密相连的Docker + 数据卷。Pod中可能包含若干容器，它们是无法进行更细粒度的分割的，例如:微服务和它的日志收集进程。Pod内部的这些容器共享相同的资源(网络、进程通信、数据卷）
@@ -39,7 +39,6 @@ Kubernetes支持两种操作方式：命令行参数、yaml文件定义。鉴于
 
 Deployment描述文件，lmsia-abc-server-deployment.yaml
 ```yaml
-
 apiVersion: apps/v1
 // Deployment
 kind: Deployment
