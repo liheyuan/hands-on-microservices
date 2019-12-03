@@ -10,6 +10,7 @@
     * [集装箱、容器化、容器编排](ms-discovery/docker-k8s.md)
     * [Kubernetes 快速入门](ms-discovery/k8s-intro.md)
     * [微服务的自动发现与负载均衡](ms-discovery/msd.md)
+    * [搭建Kubernetes集群](ms-discovery/k8s-cluster.md)
 * [微服务的开发框架](spring-boot/README.md)
     * [Gradle子项目划分与微服务的代码结构](spring-boot/sb-gradle-structure.md)
     * [Spring Boot整合Thrift RPC](spring-boot/sb-thrift.md)
@@ -59,7 +60,7 @@
 * [运维工具链](devops/README.md)
     * [Docker 私有仓库](devops/docker-repo.md)
     * [Nginx REST 网关自动配置](devops/discovery.md)
-    * [搭建Kubernetes集群](devops/k8s-cluster.md)
+    * 
     * [OpenVPN访问Kubernetes集群内网](devops/openvpn-k8s.md)
     * [线上跳板机](devops/jump-server.md)
 
