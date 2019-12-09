@@ -11,6 +11,7 @@
     * [Kubernetes 快速入门](ms-discovery/k8s-intro.md)
     * [微服务的自动发现与负载均衡](ms-discovery/msd.md)
     * [搭建Kubernetes集群](ms-discovery/k8s-cluster.md)
+    * [为Kubernetes集群开启ipvs](ms-discovery/k8s-ipvs.md)
 * [微服务的开发框架](spring-boot/README.md)
     * [Gradle子项目划分与微服务的代码结构](spring-boot/sb-gradle-structure.md)
     * [Spring Boot整合Thrift RPC](spring-boot/sb-thrift.md)

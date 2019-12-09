@@ -118,7 +118,13 @@ sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 kubelet --version Kubernetes v1.16.3
 ```
 
-记得在3台机器上，都执行上述操作。
+安装完毕后，我们需要关闭一下swap
+
+```
+sudo swapoff -a
+```
+
+记得在3台机器上，都执行上述所有的操作。
 
 ### Kubernetes的依赖镜像的准备
 
@@ -184,7 +190,7 @@ docker rmi gcr.azk8s.cn/google_containers/coredns:1.6.2
 
 了解了参数后，我们来初始化集群，在k1上执行:
 ```shell
-sudo kubeadm init --kubernetes-version v1.16.3 --apiserver-advertise-address=192.168.8.165 --service-cidr=10.100.0.0/16 --pod-network-cidr=10.200.0.0/16 -service-dns-domain=k8s.coder4.com
+sudo kubeadm init --kubernetes-version v1.16.3 --apiserver-advertise-address=192.168.8.165 --service-cidr=10.100.0.0/16 --pod-network-cidr=10.200.0.0/16 --service-dns-domain=k8s.coder4.com
 ```
 
 如上所述:
@@ -252,7 +258,7 @@ k1     NotReady   master   17s   v1.16.3
 
 初始化好集群后，加入Slave机器的工作就非常简单了，还记得前面初始化时生成的token命令行么，我们直接拷贝过来，在k2和k3上执行：
 ```shell
-kubeadm join 192.168.8.165:6443 --token lcyhu1.ie6owlcotmrwiydv \
+sudo kubeadm join 192.168.8.165:6443 --token lcyhu1.ie6owlcotmrwiydv \
     --discovery-token-ca-cert-hash sha256:4c345192970992063a0e704ef03ef831a48a368c686047bc32871334292ce091
 ```
 
@@ -272,7 +278,7 @@ k3     Ready    <none>   91s     v1.16.3
 
 ## 集群重置
 
-有的时候，我们可能进行了错误的配置，或者想重建集群。
+有的时候，我们可能执行了错误的命令，或者想直接重建集群。
 
 此时，可以按照如下命令重置集群：
 
