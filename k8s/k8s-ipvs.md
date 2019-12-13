@@ -106,3 +106,4 @@ UDP  k1:domain rr
 ## 拓展与思考
 
 1. ipvs支持多种负载均衡策略，在Kubernetes集群中，如何调整这些策略呢？
+2. 想较于iptable，为什么ipvs可以提供更好的性能呢？

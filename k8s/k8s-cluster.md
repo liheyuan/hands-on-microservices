@@ -124,6 +124,25 @@ kubelet --version Kubernetes v1.16.3
 sudo swapoff -a
 ```
 
+注意，上述关闭swap的方法，只针对本次启动有效。
+
+如果想永久关闭swap，需要进行2步操作：
+
+```
+sudo vim /etc/fstab
+禁用swapfile开头的那一行
+```
+
+接着
+
+```
+sudo vim /etc/sysctl.conf
+# 添加如下行，保存重启
+vm.swappiness = 0
+```
+
+保存、重启后，就可以了。
+
 记得在3台机器上，都执行上述所有的操作。
 
 ### Kubernetes的依赖镜像的准备

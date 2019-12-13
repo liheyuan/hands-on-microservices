@@ -28,13 +28,16 @@
 
 ## 2.0前言
 
-自从去年发布了1.0版本后，已过去一年有余，技术圈又发生了不少变革，其中包括：
-* Spring Boot 2.0 正式成为稳定版
-* K8S的Operator持续火爆
+自从去年发布了1.0版本后，已过去一年有余。
 
-为此，我开启了本书2.0版的写作计划，除了升级为Spring Boot 2.0之外，也会将K8S的一些最新实战融入进来。
+技术圈又发生了不少变革，其中引人注目的有：
 
-此外，由于gitbook项目已濒临死亡，所以写作工具换成了Typora。
+* Spring Boot 2.0 稳定版发布
+* Kubernetes下的包管理项目“Helm”，正式加入CNCF基金会
+
+为此，我开启了本书2.0版的写作计划。
+
+由于gitbook项目已濒临死亡，写作工具换成了Typora。
 
 写作水平有限，还请各位多提宝贵意见。
 
@@ -44,7 +47,7 @@
 
 * Git
 * Maven & Gradle
-* Docker & k8s
+* Docker & Kubernetes
 * Java
 * Spring / Spring Boot 
 * 数据库: 如MySQL
