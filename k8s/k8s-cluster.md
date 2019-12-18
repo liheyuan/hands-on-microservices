@@ -209,14 +209,14 @@ docker rmi gcr.azk8s.cn/google_containers/coredns:1.6.2
 
 了解了参数后，我们来初始化集群，在k1上执行:
 ```shell
-sudo kubeadm init --kubernetes-version v1.16.3 --apiserver-advertise-address=192.168.8.165 --service-cidr=10.100.0.0/16 --pod-network-cidr=10.200.0.0/16 --service-dns-domain=k8s.coder4.com
+sudo kubeadm init --kubernetes-version v1.16.3 --apiserver-advertise-address=192.168.8.165 --service-cidr=10.96.0.0/12 --pod-network-cidr=10.200.0.0/16 --service-dns-domain=cluter.coder4
 ```
 
 如上所述:
 * 我们选用k1即192.168.8.165这台机器作为master
 * pod的cidr是10.200.0.0/16
-* service的cidr是10.100.0.0/16
-* k8s内网的域名后缀是k8s.coder4.com
+* service的cidr是10.96.0.0/12 (其实这也是k8s的默认值)
+* k8s内网的域名后缀是cluster.coder4
 
 执行过程可能稍长，最后结果大致如下：
 ```shell
@@ -249,12 +249,16 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-接着，我们下载网络库插件，这里我们选用weave
+接着，我们部署网络组件，这里我们选用calico的最新版3.9
 
 ```bash
 sysctl net.bridge.bridge-nf-call-iptables=1 -w
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml
+sed -i -e "s?192.168.0.0/16?10.200.0.0/16?g" calico.yaml
+kubectl apply -f ./calico.yaml
 ```
+
+注意在上面，我们将calico的cird替换成了我们要使用的10.200.0.0/16，这一步不要忘记。
 
 都执行完毕后，我们查看下集群状态：
 

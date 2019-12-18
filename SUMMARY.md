@@ -9,12 +9,12 @@
     * [研发工具链概览](architecture/toolchain.md)
     
 * [Kubernetes快速入门](k8s/README.md)
-    
-    * [集装箱、容器化、容器编排](k8s/docker-k8s.md)
+  * [集装箱、容器化、容器编排](k8s/docker-k8s.md)
     * [Kubernetes 快速入门](k8s/k8s-intro.md)
     * [搭建Kubernetes集群](k8s/k8s-cluster.md)
     * [使用Helm进行包管理](k8s/helm.md)
     * [为Kubernetes集群开启ipvs](k8s/k8s-ipvs.md)
+    * [办公网与Kubernetes集群的打通](k8s/k8s-office.md)
     
 * [微服务的自动发现与负载均衡](ms-discovery/README.md)
 
@@ -23,7 +23,7 @@
     * 使用边车模式于微服务部署
 
 * [微服务的开发框架](spring-boot/README.md)
-    
+  
     * [Gradle子项目划分与微服务的代码结构](spring-boot/sb-gradle-structure.md)
     * [Spring Boot整合Thrift RPC](spring-boot/sb-thrift.md)
     * [Spring Boot整合REST服务](spring-boot/sb-rest.md)
