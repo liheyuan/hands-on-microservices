@@ -12,10 +12,11 @@
   * [集装箱、容器化、容器编排](k8s/docker-k8s.md)
     * [Kubernetes 快速入门](k8s/k8s-intro.md)
     * [搭建Kubernetes集群](k8s/k8s-cluster.md)
-    * [使用Helm进行包管理](k8s/helm.md)
     * [为Kubernetes集群开启ipvs](k8s/k8s-ipvs.md)
+    * [使用Helm进行包管理](k8s/helm.md)
     * [办公网与Kubernetes集群的打通](k8s/k8s-office.md)
-    
+    * [Kubernetes集群的高可用方案](k8s/k8s-ha.md)
+  
 * [微服务的自动发现与负载均衡](ms-discovery/README.md)
 
     * [微服务的自动发现与负载均衡](ms-discovery/msd.md)
