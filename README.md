@@ -1,6 +1,6 @@
 # 从0到1实战微服务架构
 
-## 前言 
+## 前言
 
 微服务是继SOA后，最流行的服务架构风格之一。
 
@@ -30,16 +30,18 @@
 
 ## 2.0前言
 
-自从本书发布了1.0版本后，已过去1年有余。
+自从本书发布了1.0版本后，已过去2年多了。
 
-技术圈又发生了不少变革，其中引人注目的有：
+技术圈又发生了很多变化，与本书密切相关的有：
 
 * Spring Boot 2.0 稳定版发布
 * Kubernetes下的包管理项目“Helm”，正式加入CNCF基金会
 
 为此，我开启了本书2.0版的写作计划。
 
-由于gitbook项目已濒临死亡，电子书渲染工具换成了mdbook。
+由于gitbook项目已不在维护，我们改用改用[mdbook](https://github.com/rust-lang/mdBook)做为图书渲染工具。
+
+本书的写作工具为[MarkText](https://github.com/marktext/marktext)。
 
 写作水平有限，还请各位多提宝贵意见。
 
@@ -65,7 +67,7 @@
 
 ## 在线阅读地址
 
-在线阅读: [从0到1实战微服务架构](https://coder4.com/homs_online/)
+TODO
 
 ## 版权
 
@@ -74,4 +76,3 @@
 依照 [署名-非商业性使用-相同方式共享](https://creativecommons.org/licenses/by-nc-sa/2.5/cn/) ，任何人可以在保留署名的情况下转载。但严禁用于商业用途。
 
 This is a book powered by [GitBook](https://github.com/GitbookIO/gitbook).
-
