@@ -31,12 +31,30 @@
 
 3. 版本依赖系统：在Java开发中，[Maven](https://maven.apache.org/)是依赖管理的事实标准。同时在企业开发中，不希望将私有包发布到公开仓库中，我们选用[Nexus Repository OSS](https://www.sonatype.com/products/repository-oss)搭建私有的Maven仓库。
 
-4. 持续集成、持续交付、持续部署是三个相近的概念，关于他们的区别，可以参考[这篇](https://www.mindtheproduct.com/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/)文章。简单来讲：集成侧重于快速构建和跑通单元测试；交付 = 构建 + 部署类生产系统(例如预发)，验证通过后手动部署上线；持续部署更进了一步：将持续构建中的“手动部署”转为自动执行，更加高效。我们将结合GitLab和[Jenkins](https://www.jenkins.io/)实现持续集成(CI)和持续交付(CD)。
+4. 持续集成、持续交付，持续部署是三个相近的概念，我们将在下一小节展开讨论。
 
 5. 微服务辅助开发工具：在微服务架构下，新增微服务、升级pom版本，接口变更等操作会频繁发生。需要开发一些辅助工具，提升研发效率。我们会在后续章节展开讨论。
 
-## 运维工具链
+## 持续集成、持续交付、持续部署
+
+标题中的三个词经常成对出现，[这篇](https://www.mindtheproduct.com/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/)文章很好的阐述了他们的联系与区别。
+
+我们还是以工程师小王举例：
+
+### 持续集成
+
+小王每次向gitlab提交一个代码，就会触发一次项目的自动构建、运行单元测试，这就是持续集成(Continuous Integration)。如下图所示：
+
+![](./ci.png)
+
+管理学大师戴明提出：“问题发现的越早，修复的成本越低”。假设小王在提交中引入了一个Bug，借助CI流程(中的集成 or 单元测试)，我们就能在第一时间发现，并尽早修复问题。
+
+### 持续部署
 
 
 
+### 持续交付
 
+
+
+关于他们的区别，可以参考文章。简单来讲：集成侧重于快速构建和跑通单元测试；交付 = 构建 + 部署类生产系统(例如预发)，验证通过后手动部署上线；持续部署更进了一步：将持续构建中的“手动部署”转为自动执行，更加高效。我们将结合GitLab和[Jenkins](https://www.jenkins.io/)实现持续集成(CI)和持续交付(CD)。
