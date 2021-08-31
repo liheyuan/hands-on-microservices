@@ -54,15 +54,28 @@ Docker凭借“快速”、“可移植性”等特性""一战成名"，是单�
 
 | 需求               | 选型                        | 版本             |
 | ---------------- | ------------------------- | -------------- |
+| 开发语言             | Java                      | 8              |
 | 开发框架             | Spring Boot               | 2.5.4          |
 | RPC              | gRPC                      | 1.14.x         |
 | 服务注册 / 发现 / 配置中心 | Nacos                     | 2.x            |
 | 熔断 / 限流          | Resilience4j              | 1.7.1          |
 | SQL数据库           | MySQL                     | 8.0.X          |
-| No SQL数据库        | Redis                     | 6.2            |
+| 内存数据库            | Redis                     | 6.2            |
 | 消息队列             | RocketMQ                  | 4.9.1          |
 | 日志               | Kafka + ELB               | 2.13 + 7.14.X  |
 | 监控               | VictoriaMetrics + Grafana | 1.64.1 + 8.1.X |
 | 链路追踪             | SkyWalking                | 8.7.0          |
 
-## 
+开发语言：我们选择了Java做为开发语言。与新近崛起的Go、Rust等语言相比，Java不是最完美的语言，但它依然拥有较高的开发、运行效率，最充足的人才供给。版本方面我们选择Java 8（最后一个免费的Java版本）。
+
+开发框架：在Java开发领域，Spring生态的渗透率已超过60% ([出处]([Spring dominates the Java ecosystem with 60% using it for their main applications | Snyk](https://snyk.io/blog/spring-dominates-the-java-ecosystem-with-60-using-it-for-their-main-applications/)))。顺应这一趋势，我们选择Spring 生态内的Spring Boot做为主要开发框架。Spring Boot提供的注解配置、嵌入式容器、starter等特性，可以极大简化Java应用的开发。
+
+RPC框架：我们选择开源的gRPC做为RPC框架，它使用Protocl Buffer序列化，HTTP 2传输协议，具有更灵活的通信模式和较高的传输效率。
+
+服务注册、发现、配置中心：[Nacos]([什么是 Nacos](https://nacos.io/zh-cn/docs/what-is-nacos.html))是阿里巴巴开源的服务管理项目，同时具备服务注册、发现、配置中心。Nacos原生支持Spring Boot、k8s等融合方向。经过几年的发展，Nacos已经较为成熟，支撑了阿里巴巴、中国移动等数十家大型公司的线上系统。
+
+熔断、限流：本书不会探讨Service Mesh等平台级别的流量控制方案。我们主要讨论服务进程级别的熔断、限流方案。老牌项目Hystrix停更后，我们选择开源的Resilience4j做为熔断、限流的Java库解决方案。
+
+数据库：做为开源数据库的佼佼者，MySQL常年稳居市场份额的前三名。我们选择其较新的稳定版8.0.X。
+
+内存数据库：做为SQL数据库的补充，内存数据库的应用场景是：吞吐量更大、延迟更低。高性能的Redis是最佳选择。根据[官方评测](https://redis.io/topics/benchmarks)，Redis 6.x在开启pipeline模式的前提下，可以提供高达55万RPS。
