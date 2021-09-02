@@ -62,8 +62,8 @@ Docker凭借“快速”、“可移植性”等特性""一战成名"，是单�
 | SQL数据库           | MySQL                     | 8.0.X          |
 | 内存数据库            | Redis                     | 6.2            |
 | 消息队列             | RocketMQ                  | 4.9.1          |
-| 日志               | Kafka + ELB               | 2.13 + 7.14.X  |
-| 监控               | VictoriaMetrics + Grafana | 1.64.1 + 8.1.X |
+| 日志               | Kafka + ELK               | 2.13 + 7.14.X  |
+| 监控 / 告警          | VictoriaMetrics + Grafana | 1.64.1 + 8.1.X |
 | 链路追踪             | SkyWalking                | 8.7.0          |
 
 开发语言：我们选择了Java做为开发语言。与新近崛起的Go、Rust等语言相比，Java不是最完美的语言，但它依然拥有较高的开发、运行效率，最充足的人才供给。版本方面我们选择Java 8（最后一个免费的Java版本）。
@@ -79,3 +79,21 @@ RPC框架：我们选择开源的gRPC做为RPC框架，它使用Protocl Buffer�
 数据库：做为开源数据库的佼佼者，MySQL常年稳居市场份额的前三名。我们选择其较新的稳定版8.0.X。
 
 内存数据库：做为SQL数据库的补充，内存数据库的应用场景是：吞吐量更大、延迟更低。高性能的Redis是最佳选择。根据[官方评测](https://redis.io/topics/benchmarks)，Redis 6.x在开启pipeline模式的前提下，可以提供高达55万RPS。
+
+消息队列：Apache RocketMQ是阿里巴巴的开源的分布式消息队列，具有极低的延迟和较高的吞吐量。相比于老牌的Kafka，Rocket MQ更适用于消息队列的场景。我们选用其最新稳定版4.9.1。
+
+日志：ELK是经典的日志日志方案。在此基础上，我们前置增加了Kafka，利用其强大的写能力，构建起缓冲队列，以应对海量日志的突发写入。
+
+监控 / 告警：纵观DevOps领域，Prometheus + Grafana已经成为了监控领域的事实标准。然而，Prometheus并不支持原生的集群部署，其在大规模应用下很容易出现瓶颈。[VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics)是一款可以嵌入Prometheus的分布式时序存储引擎。起初VictoriaMetrics只想做一个引擎，在近几个版本社区加大了对vmagent的开发投入。vmagent是一款轻量级的代理，兼容Prometheus协议，可以直接替代Prometheus完成大部分工作。在本书中，我们直接选择VictoriaMetrics + Grafana做为兼容告警的默认技术栈。
+
+链路追踪：[SkyWalking](https://skywalking.apache.org/)是由国人主导的一款开源APM(application performance management)。在小米、滴滴等公司都有应用。我们选择其最新的稳定版本。
+
+看了上面的文字，你可能有点不爽：“什么都没分析，直接甩结论”。
+
+其实，技术选型，是一个非常大的话题，每一个需求单独拎出来，看看竞品，看看发展趋势，都能洋洋洒洒的写一章出来，但是我觉得必要性不大：
+
+- 技术演进速度非常快，今天适合的明天就有可能被淘汰(看看Docker)
+
+- 每个公司面临的具体场景情况都是不同的，很难穷尽，更无法全部都满足
+
+因此，我只是在自己可见的技术水平内，选择了相对靠谱的方案，解决了一部分“选择障碍的问题”，如果你有更优秀的选择，也欢迎提Issue交流、讨论。
