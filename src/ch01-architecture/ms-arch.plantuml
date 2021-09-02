@@ -29,16 +29,24 @@ package "业务服务层" as l4 {
 }
 
 package "微服务设施层" as l3 {
-    [服务注册] as n31
-    [服务发现] as n32
-    [配置中心] as n33
-    [熔断] as n34
-    [限流] as n35
-    [中   间   件] as n36
-    [日志] as n37
-    [监控] as n38
-    [报警]  as n39
-    [链路追踪] as n40
+    [开发框架] as n31
+    [RPC] as n32
+    [服务注册发现] as n33
+    [配置中心] as n34
+    [ ] as n35
+    hide n35
+    
+
+    [熔断/限流] as n36
+    [数据库] as n37
+    [NoSQL] as n38
+    [消息队列] as n39
+
+    [链路追踪] as n3a
+    [监控] as n3b
+    [报警]  as n3c
+    [日志] as n3d
+
 
     [n31] -[hidden]right-> [n32]
     [n32] -[hidden]right-> [n33]
@@ -46,11 +54,17 @@ package "微服务设施层" as l3 {
     [n34] -[hidden]right-> [n35]
 
     [n31] -[hidden]down-> [n36]
-    
+
     [n36] -[hidden]right-> [n37]
     [n37] -[hidden]right-> [n38]
     [n38] -[hidden]right-> [n39]
-    [n39] -[hidden]right-> [n40]
+
+
+    [n36] -[hidden]down-> [n3a]
+
+    [n3a] -[hidden]right-> [n3b]
+    [n3b] -[hidden]right-> [n3c]
+    [n3c] -[hidden]right-> [n3d]
 }
 
 
@@ -84,7 +98,7 @@ package "基础设施" as l1 {
 
 n51 -[hidden]down-> n41 
 n41 -[hidden]down-> n31
-n36 -[hidden]down-> n21
+n3a -[hidden]down-> n21
 n21 -[hidden]down-> n11 
 
 
