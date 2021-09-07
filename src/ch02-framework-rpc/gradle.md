@@ -108,9 +108,15 @@ IntelliJ
 
 ## gradle-wrapper生成
 
-gradle-wrapper是用于执行gradle的脚本 + 精简版的gradle二进制文件，推荐使用。
+gradle-wrapper是用于执行gradle的脚本 + 精简版的gradle二进制文件。
 
-当初始化gradle项目时，建议执行如下命令：
+既然已经有了gradle，为什么还要单独弄一个wrapper出来么？
+
+- 方便没有安装gradle的环境执行构建(例如打包机)
+
+- 支持多版本gradle的快速切换(实现nvm的效果)
+
+初始化gradle项目时，执行如下命令：
 
 ```shell
 gradle init
@@ -128,7 +134,7 @@ gradle会生成如下wrapper相关文件：
 └── settings.gradle
 ```
 
-建议将上述文件一并加入git仓库中。这样，只要clone代码就可以执行构建操作，无需本地单独安装gradle。
+建议将上述文件一并加入git仓库中，以防出现版本兼容问题。
 
 ## IntelliJ IDEA中配置Gradle
 
