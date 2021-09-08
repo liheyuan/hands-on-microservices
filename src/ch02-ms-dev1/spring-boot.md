@@ -1,6 +1,8 @@
 # Sprint Boot项目与Gradle的集成
 
-本节我们将借助Spring Start，快速搭建微服务项目。在此基础上，我们尝试将其改造成子项目结构。
+本节我们将借助Spring Start快速搭建微服务项目。
+
+在此基础上，我们会将工程改造成子项目的组织形式。
 
 ## Spring Start快速生成项目
 
@@ -117,7 +119,7 @@ java -jar ./build/libs/homs-demo-0.0.1-SNAPSHOT.jar
 
 在微服务架构中，需要新建大量微服务。而Spring社区提供的Starter工具，降低了微服务的初始化门槛。在实际开发中，我们也可以结合实际情况，定制出适合自己团队的脚手架工具。
 
-## 改造为子项目结构
+## 子项目改造
 
 上述脚手架生成的项目，是独立项目模式：一个目录下，只有一个独立项目。
 
@@ -127,7 +129,7 @@ java -jar ./build/libs/homs-demo-0.0.1-SNAPSHOT.jar
 
 - 常量提取到单独子项目
 
-在本书的架构中，我们的微服务选用的是server / client 双子项目结构
+在本书的实战中，我们的微服务选用的是server / client 双子项目结构
 
 - client：内置protobuf、桩文件，客户端代码、自动配置代码
 
@@ -387,7 +389,9 @@ dependencies {
 
 针对client子项目，也是类似的修改，这里不做赘述。
 
-至此，我们完成Gradle与Spring Boot的集成，及子项目拆分。
+至此，我们完成Gradle与Spring Boot的集成、子项目拆分。
+
+关于“Spring Boot + Gradle子项目”的资料，在网上并不多见，希望你能仔细阅读、反复揣摩、举一反三:-)
 
 本文涉及的项目代码，我整理到了[这里](https://github.com/liheyuan/homs-demo)，供大家参考。
 
