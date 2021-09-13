@@ -104,4 +104,100 @@ CREATE TABLE `users` (
 
 温馨提示：我们使用utf8mb4字符集，如果用utf8是会有坑，可以参考[这篇文章]([掘金](https://adamhooper.medium.com/in-mysql-never-use-utf8-use-utf8mb4-11761243e434))。强烈推荐你对所有的数据表，都设置为utf8mb4。
 
+## Spring Boot 集成 JDBC访问MySQL
 
+我们先通过集成jdbc的方式访问MySQL数据库。
+
+首先在server项目的build.gradle中添加依赖
+
+```groovy
+implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+implementation 'mysql:mysql-connector-java:8.0.20'
+```
+
+上述依赖中：
+
+- spring-boot-starter-jdbc是集成jdbc的starter依赖包
+
+- mysql-connector-java是集成MySQL的驱动
+
+接着，我们配置下数据源：
+
+```yaml
+spring.datasource:
+  url: jdbc:mysql://127.0.0.1:3306/homs_demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+  username: HomsDemo
+  password: 123456
+  hikari:
+    minimumIdle: 10
+    maximumPoolSize: 100
+```
+
+上述配置分为两部分：
+
+- spring.datasource.url / username / password定义了MySQL的访问链接
+
+- hikari是数据库连接池的配置。
+
+Hikari是Spring Boot 2默认的链接池，[官方性能评测优秀](https://github.com/brettwooldridge/HikariCP-benchmark)。这里我们配置了minimumIdle(最小连接数)和maximumPoolSize(最大连接数)两个选项。更多配置参数可以参考[官方文档]([GitHub - brettwooldridge/HikariCP: 光 HikariCP・A solid, high-performance, JDBC connection pool at last.](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby))。
+
+经过上述的组合配置后，对应DataSource对应的Configuration会自动激活，并注册一系列的关联Bean。
+
+下面让我们使用它访问MySQL数据库：
+
+```java
+@Repository
+public class UserRepository1Impl implements UserRepository {
+
+    @Autowired
+    protected NamedParameterJdbcTemplate db;
+
+    private static RowMapper<User> ROW_MAPPER = new BeanPropertyRowMapper<>(User.class);
+
+    @Override
+    public Optional<Long> create(User user) {
+        String sql = "INSERT INTO `users`(`name`) VALUES(:name)";
+        SqlParameterSource param = new MapSqlParameterSource("name", user.getName());
+        KeyHolder holder = new GeneratedKeyHolder();
+        if (db.update(sql, param, holder) > 0) {
+            return Optional.ofNullable(holder.getKey().longValue());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<User> getUser(long id) {
+        String sql = "SELECT * FROM `users` WHERE `id` = :id";
+        SqlParameterSource param = new MapSqlParameterSource("id", id);
+        try {
+            return Optional.ofNullable(db.queryForObject(sql, param, ROW_MAPPER));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<User> getUserByName(String name) {
+        String sql = "SELECT * FROM `users` WHERE `name` = :name";
+        SqlParameterSource param = new MapSqlParameterSource("name", name);
+        try {
+            return Optional.ofNullable(db.queryForObject(sql, param, ROW_MAPPER));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+}
+```
+
+在上面的代码中，我们自动装配了"NamedParameterJdbcTemplate"，然后用它访问MySQL数据库：
+
+- 读请求使用db.query，配合RowMapper做类型转化
+
+- 写请求使用db.update，配合KeyHolder获取自增主键
+
+使用JDBC访问MySQL的方式，优点和缺点是完全一样的：使用显示的SQL语句操作数据库。
+
+优点：直接、方便代码Review和性能检查
+
+缺点：SQL编写过程繁琐、易错，特别是对于CRUD请求，效率较低
