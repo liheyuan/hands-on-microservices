@@ -104,9 +104,9 @@ CREATE TABLE `users` (
 
 温馨提示：我们使用utf8mb4字符集，如果用utf8是会有坑，可以参考[这篇文章]([掘金](https://adamhooper.medium.com/in-mysql-never-use-utf8-use-utf8mb4-11761243e434))。强烈推荐你对所有的数据表，都设置为utf8mb4。
 
-## Spring Boot 集成 JDBC访问MySQL
+## Spring Boot 集成 JDBC操作MySQL
 
-我们先通过集成jdbc的方式访问MySQL数据库。
+我们先通过集成jdbc的方式操作MySQL数据库。
 
 首先在server项目的build.gradle中添加依赖
 

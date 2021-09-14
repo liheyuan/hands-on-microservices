@@ -1,13 +1,13 @@
 # Spring Boot集成SQL数据库2
 
-## Spring Boot 集成 MyBatis访问MySQL
+## Spring Boot 集成 MyBatis操作MySQL
 
 MyBatis是一款半自动的ORM框架。由于某国内大厂的广泛使用，MyBatis在国内非常火热(在国外其热度不如Hibernate)。
 
 首先还是集成依赖：
 
 ```groovy
-implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
+implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
 implementation 'mysql:mysql-connector-java:8.0.20'
 ```
 
@@ -26,36 +26,20 @@ spring.datasource:
 
 # mybatis extra
 mybatis:
-  config-location: classpath:mybatis-config.xml
-  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
   type-aliases-package: com.coder4.homs.demo.server.mybatis.dataobject
 ```
 
 不难发现，数据库链接的定义复用了jdbc的那一套，MyBatis的定义分3行，如下：
 
-- config-location：主配置文件在resource/mybatis-config.xml下
-
-- mapper-locations：mapper文件路径在resource/mapper下
+- configuration：开启驼峰规则转化
 
 - type-aliases-package：mapper文件存放的包名
 
-看下mybatis-config.xml配置：
+更多MyBatis的配置选项可以参考[这里]([mybatis-spring-boot-autoconfigure – Introduction](https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/))
 
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
-<configuration>
-
-    <settings>
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
-    </settings>
-
-</configuration>
-```
-
-这里只配置了命名的驼峰转化规则，更多配置可以参考[官方文档]([mybatis &#x2013; MyBatis 3 | 配置](https://mybatis.org/mybatis-3/zh/configuration.html))。
-
-然后我们定义Mapper，在MyBatis中，Mapper相当于前面手写的Repository，定义如下：
+接着，我们定义Mapper，在MyBatis中，Mapper相当于前面手写的Repository，定义如下：
 
 ```java
 package com.coder4.homs.demo.server.mybatis.mapper;
@@ -77,10 +61,14 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface UserMapper {
 
+    @Insert("INSERT INTO users(name) VALUES(#{name})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     long create(UserDO user);
 
+    @Select("SELECT * FROM users WHERE id = #{id}")
     UserDO getUser(@Param("id") Long id);
 
+    @Select("SELECT * FROM users WHERE name = #{name}")
     UserDO getUserByName(@Param("name") String name);
 
 }
@@ -88,56 +76,158 @@ public interface UserMapper {
 
 你可能会奇怪：这不是接口(interface)么，并没有实现？
 
-是的，通过定义@Repository和@Mapper，MyBatis会通过运行时的切面注入，帮我们自动实现！
+是的，通过定义@Repository和@Mapper，MyBatis会通过运行时的切面注入，帮我们自动实现，具体执行的SQL和映射，会读取@Select、@Options等注解中的配置。
 
-那么具体实现时执行什么SQL呢？需要你在对应xml中编写，
+经过上述介绍，你可以发现：
 
-mapper/UserMapper.xml
+MyBatis可以直接通过注解的方式快速访问数据库，(相对于JDBC的)精简了大量无用代码。
 
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+同时，MyBatis依然需要指定运行的SQL语句，这与JDBC的方式是一致的。虽然有些繁琐，但可以保证性能可控。
 
-<mapper namespace="com.coder4.homs.demo.server.mybatis.mapper.UserMapper">
-    <sql id="FIELDS">
-        id, name
-    </sql>
+如果你在网上搜索"MyBatis Spring集成"，会找到大量xml配置的用法。
 
-    <insert id="create" useGeneratedKeys="true" keyProperty="id" parameterType="com.coder4.homs.demo.server.mybatis.dataobject.UserDO">
-        INSERT INTO users (
-        name
-        ) VALUES (
-        #{name}
-        )
-    </insert>
-    <select id="getUser"
-            parameterType="Long"
-            resultType="com.coder4.homs.demo.server.mybatis.dataobject.UserDO">
-        SELECT
-            <include refid="FIELDS"></include>
-        FROM users
-        WHERE id = #{id}
-    </select>
-    <select id="getUserByName"
-            parameterType="String"
-            resultType="com.coder4.homs.demo.server.mybatis.dataobject.UserDO">
-        SELECT
-        <include refid="FIELDS"></include>
-        FROM users
-        WHERE name = #{name}
-    </select>
-</mapper>
+在一些老项目中，xml是标准的集成方式。在这种配置方式下，配置繁琐、代码量大，即使借助"MyBatisX"等插件，也依然较为复杂。
+
+因此，除非你要维护遗留的老项目代码，我都建议你使用(本文中)注解式集成MyBatis。
+
+## Spring Boot集成 JPA 操作MySQL
+
+JPA的全称是Java Persistence API，即持久化访问规范API。
+
+Spring也提供了集成JPA的方案，称为 Spring Data JPA，其底层是通过Hibernate的JPA来实现的。
+
+首先集成依赖：
+
+```groovy
+implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+implementation 'mysql:mysql-connector-java:8.0.20'
 ```
 
-如上所述，我们在xml中配置了每一个方法对应的SQL语句，部分参数是动态的，但都很好理解。
+与前面类似，不再重复介绍。
 
-无须多言，MyBatis的使用非常繁琐，虽然省略了部分Java代码，但复杂的XML配置和奇怪的语法，都增加了学习与维护门槛。除非你的项目中需要海量SQL语句，否则引入MyBatis是得不偿失的。
+接着是配置：
 
-为了减少代码量，社区开发了多款自动生成MyBatis"骨架代码"的插件，例如“Free MyBatis Plugin”、“MyBatisX”等。他们可以部分缓解上述问题，但生成的代码较难维护。
+```yaml
+# jdbc demo
+spring.datasource:
+  url: jdbc:mysql://127.0.0.1:3306/homs_demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+  username: HomsDemo
+  password: 123456
+  hikari:
+    minimumIdle: 10
+    maximumPoolSize: 100
 
-MyBatis也是有优点的：可以直接操作SQL语句，性能可控。
 
-## Spring Boot集成 JPA 访问MySQL
+# jpa demo
+spring.jpa:
+  database-platform: org.hibernate.dialect.MySQL8Dialect
+  hibernate.ddl-auto: validate
+```
+
+在MySQL连接上，我们依然复用了Spring DataSource的配置。
+
+jpa侧的配置为：
+
+- database-platform：设置使用MySQL8语法
+
+- hibernate.ddl-auto：只校验表，不回主动更新数据表的结构
+
+接着，我们来定义实体(Entity)：
+
+```java
+@Entity
+@Data
+@Table(name = "users")
+public class UserEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    // @Column(name = "name")
+    private String name;
+
+    public User toUser() {
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        return user;
+    }
+
+}
+```
+
+这里我们将UserEntity与表"users"做了关联。
+
+接下来是Repository：
+
+```java
+@Repository
+public interface UserJPARepository extends CrudRepository<UserEntity, Long> {
+
+    Collection<UserEntity> findByName(String name);
+
+}
+```
+
+我们继承了CrudRepository，他会自动生成针对UserEntity的CRUD操作。
+
+此外，我们还定义了1个额外函数：
+
+- findByName，通过隐士语法规则，让JPA自动帮我们生成对应SQL
+
+从直观感受上，JPA比MyBatis更加“高级” -- 一些简单的SQL都不用写了。
+
+但天下真的有免费的馅饼么？我们先卖个关子。
+
+## JMJ应该选哪个
+
+经过这两节的介绍，你已经掌握了JDBC、MyBatis、JPA三种操作数据库的方式。
+
+在实战中，究竟要选哪个呢？
+
+从易用性的角度来评估，我们可以得出结论：JPA > MyBatis > JDBC
+
+那么从性能的角度来看呢？
+
+我们使用wrk做了(get-by-id接口的)简单压测，结论如下：
+
+|         | 读QPS |
+| ------- | ---- |
+| JDBC    | 457  |
+| MyBatis | 445  |
+| JPA     | 114  |
+
+这里，你会惊讶的发现：
+
+- JDBC和MyBatis的性能差别不大，在5%以内
+
+- JPA(Hibernate)的性能，居然只有其余两种方式的1/3 
+
+如此差的性能，真的让人百思不得其解，我尝试打印了SQL和执行耗时，并没有发现什么异常。
+
+更进一步的，我们尝试用指定SQL的方式，替换了自动生成的接口，如下
+
+```java
+@Repository
+public interface UserJPARepository extends CrudRepository<UserEntity, Long> {
+
+    @Query(value = "SELECT * FROM users WHERE id = :id", nativeQuery = true)
+    Optional<UserEntity> findByIdFast(@Param("id") long id);
+
+}
+```
+
+这次的压测结果是：447，性能基本和JDBC持平了。但是这种NativeSQL的用法并没有使用自动生成SQL的功能，没有发挥Hibernate本来的功效。
+
+所以，我们认为，锅在于Hibernate自动生成SQL的逻辑耗时过大。
+
+当然，Hibernate也不是一无是处，针对多层关联，建模复杂的场景，使用Entity做映射，会更加方便。
+
+让我们回到前面的问题上：JMJ应该选哪个？
+
+- 如果对性能有极致要求，建议JDBC或者MyBatis。
+
+- 如果建模场景复杂，嵌套密集，且对性能要求不高，可以选用Hibernate。
 
 
