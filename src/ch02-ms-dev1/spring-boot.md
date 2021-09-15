@@ -394,5 +394,3 @@ dependencies {
 关于“Spring Boot + Gradle子项目”的资料，在网上并不多见，希望你能仔细阅读、反复揣摩、举一反三:-)
 
 本文涉及的项目代码，我整理到了[这里](https://github.com/liheyuan/homs-demo)，供大家参考。
-
-

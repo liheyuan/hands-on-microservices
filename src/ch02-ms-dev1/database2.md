@@ -229,5 +229,3 @@ public interface UserJPARepository extends CrudRepository<UserEntity, Long> {
 - 如果对性能有极致要求，建议JDBC或者MyBatis。
 
 - 如果建模场景复杂，嵌套密集，且对性能要求不高，可以选用Hibernate。
-
-

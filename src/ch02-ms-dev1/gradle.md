@@ -45,7 +45,7 @@ gradle的依赖使用了Maven的仓库。由于众所周知的原因，这些仓
 // project
 allprojects{
     repositories {
-	mavenLocal()
+    mavenLocal()
         maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url 'https://maven.aliyun.com/repository/jcenter/' }
         maven { url 'https://maven.aliyun.com/repository/google/' }
@@ -63,7 +63,7 @@ settingsEvaluated { settings ->
 
         // Add my Artifactory mirror
         repositories {
-	        mavenLocal()
+            mavenLocal()
             maven {
                 url "https://maven.aliyun.com/repository/gradle-plugin/"
             }
@@ -147,7 +147,5 @@ IDEA默认支持Gradle，请确保配置正确：
 上方的Gradle配置文件默认路径，请维持默认配置，使用家目录下默认的。
 
 下方的Gradle版本，推荐使用默认选项(gradle-wrapper.properties)，即使用项目路径下gradle-wrapper.properties指定的版本。
-
-
 
 经过上述配置，我们已经搭建了Gradle的构建环境。在下一节，我们会在此基础上集成Spring Boot框架。
