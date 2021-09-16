@@ -246,7 +246,7 @@ String target = "127.0.0.1:5000";
             return;
         }
 
-        
+
         HomsDemoClient client = new HomsDemoClient(channel);
 ```
 
