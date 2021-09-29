@@ -1,4 +1,4 @@
-# 微服务的注册中心1
+# 微服务集成Nacos注册中心：注册
 
 ![f](amazon-ms-structure.png)
 
@@ -65,4 +65,107 @@ docker run \
 
 ## 服务端集成Nacos自动注册
 
+接下来，我们实现微服务的自动注册，即服务启动时，将自身的IP和端口，主动注册到Nacos上。
 
+由于我们的架构体系中，通过gRPC进行服务通信，因此我们只注册RPC的部分。我们沿用第2章中的设定，端口是5000。
+
+在服务端集成Nacos有很多方法，一般常见的都是直接使用spring-cloud-starter，但本书并没有采用这种做法，原因是：
+
+- 需要引入大量额外的cloud包，导致技术依赖过于旁杂。
+
+- cloud模式采用注解的方式，并不能很好支持"一个微服务与多个不同微服务通信"的场景。
+
+综上我们直接使用裸客户端的方式，首先是依赖：
+
+```groovy
+implementation 'com.alibaba.nacos:nacos-client:2.0.3'
+```
+
+接着，我们在第2章的基础上，在RPC服务上做如下修改：
+
+```java
+@Configuration
+public class RpcServerConfiguration {
+
+    private Logger LOG = LoggerFactory.getLogger(RpcServerConfiguration.class);
+
+    @Autowired
+    private BindableService bindableService;
+
+    @Autowired
+    private HomsRpcServer server;
+
+    @Autowired
+    private NacosService nacosService;
+
+    @Bean
+    public HomsRpcServer createRpcServer() {
+        return new HomsRpcServer(bindableService, 5000);
+    }
+
+    @PostConstruct
+    public void postConstruct() throws IOException, NacosException {
+        server.start();
+        // register
+        nacosService.registerRPC(SERVICE_NAME);
+    }
+
+    @PreDestroy
+    public void preDestory() throws NacosException {
+        try {
+            server.stop();
+        } catch (InterruptedException e) {
+            LOG.info("stop gRPC server exception", e);
+        } finally {
+            // unregister
+            nacosService.deregisterRPC(SERVICE_NAME);
+            LOG.info("stop gRPC server done");
+        }
+    }
+
+
+}
+```
+
+如上所示，我们在RPC服务启动的时候，增加了向Nacos的注册、在RPC停止的时候，在Nacos上注销服务。
+
+NacosService是对NacosClient的简单封装，代码如下：
+
+```java
+@Service
+public class NacosServiceImpl implements NacosService {
+
+    @Value("${nacos.server}")
+    private String nacosServer;
+
+    private NamingService namingService;
+
+    @PostConstruct
+    public void postConstruct() throws NacosException {
+        namingService = NamingFactory
+                .createNamingService(nacosServer);
+    }
+
+    @Override
+    public void registerRPC(String serviceName) throws NacosException {
+        namingService.registerInstance(serviceName, getIP(), 5000);
+    }
+
+    @Override
+    public void deregisterRPC(String serviceName) throws NacosException {
+        namingService.deregisterInstance(serviceName, getIP(), 5000);
+    }
+
+    private String getIP() {
+        return System.getProperty("POD_IP", "127.0.0.1");
+    }
+}
+```
+
+如上所示，我们从yaml中读取Nacos服务的地址，然后从环境变量读取IP地址，并实现了注册、注销功能。
+
+这里，你可以暂时假定环境变量一定可以取到IP，在后续Kubernetes的章节，我们会介绍如何将Pod的IP注入容器的环境变量。
+
+你可以试着启动服务，然后访问Nacos的Web UI，会发现我们的服务正常发现了！
+
+至此，我们实现了服务端的服务注册。至于另一半，服务的发现，请听下回分解！
