@@ -1,4 +1,4 @@
-# 微服务集成Nacos注册中心：注册
+# Nacos注册中心：注册篇
 
 ![f](amazon-ms-structure.png)
 
