@@ -14,7 +14,7 @@ Nacos不仅提供了服务的注册与发现，也提供了配置管理的功能
 
 - 我们在group字段填充微服务的名称，例如homs-demo
 
-- 我们在dataId字段天蝎配置的key
+- 我们在dataId字段填写配置的key
 
 - Nacos的支持简单的类型检验，例如json、数值、字符串等，但只限于前端校验，存储后多统一为字符串类型
 
@@ -29,8 +29,6 @@ public interface NacosConfigService {
 
 }
 ```
-
-
 
 ```java
 package com.coder4.homs.demo.server.service.impl;
@@ -348,5 +346,3 @@ public class HomsDemoConfig {
 ```
 
 只需要添加HSConfig注解，即可完成远程配置的自动注入、绑定、更新。
-
-
