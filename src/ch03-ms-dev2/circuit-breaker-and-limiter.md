@@ -1,6 +1,6 @@
-# 熔断、限流、降级
+# Spring Boot集成熔断、限流、降级
 
-在引入resilience4j之前，我们先来讨论下三大法宝。
+在引入resilience4j之前，我们先来讨论下服务稳定性的三大法宝。
 
 - 降级：在有限资源情况下，为了应对超负荷流量，适当放弃一些功能，以保证服务的整体稳定性。例如：双十一大促时，关闭个性化推荐。
 
@@ -8,15 +8,13 @@
 
 - 熔断：这个概念最早源于物理学。
   
-  - 在电路中，若电流过大，熔断器会自动熔断，切断线路，以保证用电安全。
+  - 在电路中，若电流过大，熔断器(保险丝 / 空气开关)会发生熔断，切断线路，以保证用电安全。
   
   - 在微服务架构中，若服务调用发生大量错误(超时)，可以直接将微服务降级，以保证服务的整体稳定性。
-  
-  - 
 
 Resillence4j是一款轻量级、易用的"容错框架"，提供了保证稳定性所需的几大基础组件：
 
-- Retry：
+- Retry：重试
 
 - Circuit Breaker：基于Ring Buffer的熔断器，根据失败率/次数，自动切换熔断器的开关状态。
 
@@ -92,9 +90,9 @@ resilience4j:
     }
 ```
 
-在上述代码中，我们模拟了90%的概率随机失败的情况。
+在上述代码中，我们以90%的概率模拟了随机异常。
 
-当熔断发生时，会使用getUserByIdFallback中的结果。
+当熔断发生时，会使用getUserByIdFallback中的降级结果。
 
 执行几次后，会出现类似如下的错误日志，熔断器已成功开启。
 
@@ -184,7 +182,9 @@ io.github.resilience4j.circuitbreaker.CallNotPermittedException: CircuitBreaker 
 
 ## Bulkhead & TimeLimiter
 
-Resillence4j的时间限流器
+下面我们来看一下实线器，即限定必须在X时间内执行完毕，否则抛出异常。
+
+Resillence4j的TimeLimiter设计中，并没有内置线程池，而是要业务代码自行处理。我们可以结合Bulkhead的线程池模式一同使用，首先配置如下：
 
 ```yaml
 resilience4j:
@@ -200,6 +200,10 @@ resilience4j:
         timeoutDuration: 1s
         cancelRunningFuture: true
 ```
+
+如上所述，我们配置了线程池，并设置时限为1秒。
+
+接着看一下用法：
 
 ```java
 @Override
@@ -218,6 +222,8 @@ public CompletableFuture<Optional<User>> getUserByNameWithCompletableFutureFallb
 }
 ```
 
+我们模拟了随机超时时间，当超过1秒时，会自动抛出如下的降级异常，并走降级逻辑。
+
 ```shell
 2021-10-09 01:53:32.637 ERROR 4890 --- [pool-7-thread-1] c.c.h.d.s.service.impl.UserServiceImpl   : enter fallback for getUserByNameFallback
 
@@ -235,6 +241,8 @@ java.util.concurrent.TimeoutException: TimeLimiter 'getUserByName' recorded a ti
 
 ## RateLimiter
 
+最后我们来看一下限流器，配置如下：
+
 ```yaml
 resilience4j:
   rateLimiter:
@@ -244,6 +252,8 @@ resilience4j:
         limitRefreshPeriod: 500ms
         timeoutDuration: 0
 ```
+
+设置了每0.5秒限1个请求，用法如下：
 
 ```java
 @Override
@@ -257,6 +267,8 @@ public Optional<User> getUserByIdV2Fallback(long id, Throwable e) {
     return Optional.empty();
 }
 ```
+
+当快速访问两次接口后，会抛出如下的异常，并返回降级结果。
 
 ```shell
 2021-10-09 14:00:13.564 ERROR 5598 --- [nio-8080-exec-8] c.c.h.d.s.service.impl.UserServiceImpl   : getUserByIdV2 fallback exception
@@ -343,3 +355,9 @@ io.github.resilience4j.ratelimiter.RequestNotPermitted: RateLimiter 'getUserById
     at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.50.jar:9.0.50]
     at java.lang.Thread.run(Thread.java:748) [na:1.8.0_291]
 ```
+
+至此，我们已经熟悉了Resillence4j中的主要组件，并覆盖了yaml中的常见的配置。
+
+更多配置选项，可以参考[这篇文档](https://resilience4j.readme.io/docs/getting-started-3)。
+
+由于篇幅限制，本文并未涉及Retry、Cache两大组件，推荐你阅读[官方文档](https://resilience4j.readme.io/docs/retry)自行探索。

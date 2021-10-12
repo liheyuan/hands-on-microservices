@@ -270,7 +270,7 @@ RedisTemplate的语法稍微有些奇怪，你也可以直接使用Conn来做操
 ```java
 @Autowired
 private LettuceConnectionFactory leconnFactory;
-    
+
 try (RedisConnection conn = leconnFactory.getConnection()) {
     conn.set("hehe".getBytes(), "haha".getBytes());
 }
@@ -281,5 +281,3 @@ try (RedisConnection conn = leconnFactory.getConnection()) {
 思考题：当一个微服务需要连接多组Redis，该如何集成呢？
 
 请自己探索，并验证其正确性。
-
-
