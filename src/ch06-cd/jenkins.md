@@ -4,15 +4,15 @@ Jenkins是一款开源、强大的持续集成工具，其前身是Hudson(商用
 
 本节将介绍Jenkins的搭建。从架构上理解，Jenklins由两类角色组成：
 
-- Master：主控节点，负责管理、配置工作。
+- Controller：主控节点，负责管理、配置工作，也称作Master节点。
 
-- Slave：执行具体作业的工作节点
+- Agent：执行具体作业的工作节点，也称作Slave节点，或者Executor节点。
 
 严格来说，Master节点也可以执行具体作业，但是处于安全性考虑，不建议这样做。
 
 ## Jeknins的启动与初始配置
 
-首先启动Master节点：
+首先启动Controller节点：
 
 ```bash
 #!/bin/bash
@@ -64,9 +64,9 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 *************************************************************
 *************************************************************
 
-2021-11-04 03:15:53.502+0000 [id=49]	INFO	h.m.DownloadService$Downloadable#load: Obtained the updated data file for hudson.tasks.Maven.MavenInstaller
-2021-11-04 03:15:53.502+0000 [id=49]	INFO	hudson.util.Retrier#start: Performed the action check updates server successfully at the attempt #1
-2021-11-04 03:15:53.517+0000 [id=49]	INFO	hudson.model.AsyncPeriodicWork#lambda$doRun$0: Finished Download metadata. 36,815 ms码
+2021-11-04 03:15:53.502+0000 [id=49]    INFO    h.m.DownloadService$Downloadable#load: Obtained the updated data file for hudson.tasks.Maven.MavenInstaller
+2021-11-04 03:15:53.502+0000 [id=49]    INFO    hudson.util.Retrier#start: Performed the action check updates server successfully at the attempt #1
+2021-11-04 03:15:53.517+0000 [id=49]    INFO    hudson.model.AsyncPeriodicWork#lambda$doRun$0: Finished Download metadata. 36,815 ms码
 ```
 
 如上中间部分，即初始密码。
@@ -87,9 +87,9 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 安装完插件后，需要创建初始管理员账号。
 
-## Jeknins的Slave节点配置
+## Jeknins的Agent节点配置
 
-启动Master节点后，我们着手配置Slave节点，这里也有多种选项：
+启动Controller节点后，我们着手配置Slave节点，这里也有多种选项：
 
 - 启动固定数量的Slave节点
 
