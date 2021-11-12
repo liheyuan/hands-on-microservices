@@ -1,4 +1,4 @@
-# Jenkins定制Executor
+# Jenkins定制Agent
 
 上一节，我们实现了最简单的打包任务，在这一节，我们将定制所需的打包环境，为CD流水线做准备。
 
@@ -100,7 +100,7 @@ ENV K8S_VERSION=v1.22.3
 # tool
 USER root
 RUN apt-get update && \
-    apt-get install -y curl unzip && \
+    apt-get install -y curl unzip docker-ce docker-ce-cli && \
     apt-get clean
 
 # gradle
@@ -127,17 +127,15 @@ USER jenkins
 - 接着，我们安装gradle、kubectl等二进制文件
 - 最后恢复默认的运行环境
 
-
-
 制作镜像
 
 ```shell
 docker build -t "coder4/jenkins-my-agent" .
 ```
 
-运行
+制作时间会比较长
 
-
+再次打包
 
 ```groovy
 pipeline {
@@ -148,13 +146,13 @@ pipeline {
                 sh "echo todo"
             }
         }
-        
+
         stage('gradle') {
             steps {
                 sh "gradle -v"
             }    
         }
-        
+
         stage('k8s') { 
             steps {
                 withKubeConfig([credentialsId: "60a8e9d2-0212-4ff4-aa98-f46fced97121",serverUrl: "https://kubernetes:6443"]) {
@@ -166,7 +164,7 @@ pipeline {
 }
 ```
 
-
+需要指出的是：上述'k8s'阶段，使用的凭据，是我们在[ Jenkins搭建入门](./jenkins-k8s.md)一节中生成的证书+凭据。
 
 运行结果
 
@@ -231,5 +229,3 @@ minikube   Ready    control-plane,master   6h58m   v1.21.2
 [Pipeline] End of Pipeline
 Finished: SUCCESS
 ```
-
-
