@@ -4,8 +4,6 @@
 
 本节，我们将继续完善、优化部署水线。
 
-
-
 ## Gradle加速
 
 首先，在之前的定制Agent中，我们使用了Gradle(Maven)的默认仓库。
@@ -76,7 +74,7 @@ RUN echo "Ly8gcHJvamVjdAphbGxwcm9qZWN0c3sKICAgIHJlcG9zaXRvcmllcyB7CgltYXZlbkxvY2
 // project
 allprojects{
     repositories {
-	mavenLocal()
+    mavenLocal()
         maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url 'https://maven.aliyun.com/repository/jcenter/' }
         maven { url 'https://maven.aliyun.com/repository/google/' }
@@ -96,7 +94,7 @@ settingsEvaluated { settings ->
 
         // Add my Artifactory mirror
         repositories {
-	    mavenLocal()
+        mavenLocal()
             maven {
                 url "https://maven.aliyun.com/repository/gradle-plugin/"
             }
@@ -315,13 +313,13 @@ EOF
             steps {
                 script {
                     env.DEPLOY_VERSION = params.Action.equals("Rollback") ? params.RollbackVersion : env.BUILD_NUMBER
-                    
-                    
+
+
                     withKubeConfig([credentialsId: "60a8e9d2-0212-4ff4-aa98-f46fced97121",serverUrl: "https://kubernetes:6443"]) {
                         sh """
-                        
+
 echo "Kubernetes Deploy $JOB_NAME Version $DEPLOY_VERSION"
-                        
+
 # prepare deployment yaml
 cat <<EOF  | kubectl apply -f -
 apiVersion: apps/v1
