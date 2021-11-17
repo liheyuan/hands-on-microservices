@@ -33,8 +33,6 @@ docker run \
     --detach \
     --restart always \
     docker.elastic.co/elasticsearch/elasticsearch:7.15.2
-
-
 ```
 
 接着，我们启动SkyWalking的后台服务：
@@ -197,5 +195,3 @@ docker@minikube:~$ curl "172.17.0.3:8080"
 - 不仅agent，服务的jar包其实也是可以通过initContainer来拷贝的，这可以进一步压缩镜像体积。
 
 上述优化，做为课后作业，留给喜欢挑战的你吧：-）
-
-

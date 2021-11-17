@@ -306,8 +306,6 @@ bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092 --topic k8s-log-
 {"@timestamp":"2021-11-15T03:18:27.470Z","@metadata":{"beat":"filebeat","type":"_doc","version":"7.15.2"},"input":{"type":"container"},"orchestrator":{"cluster":{"url":"control-plane.minikube.internal:8443","name":"mk"}},"agent":{"type":"filebeat","version":"7.15.2","hostname":"minikube","ephemeral_id":"335988de-a165-4070-88f1-08c3d6be7ba5","id":"850b6889-85e0-41c5-8a83-bce344b8b2ec","name":"minikube"},"stream":"stdout","message":"2021-11-15 03:18:27.470  INFO 1 --- [           main] com.homs.start.StartApplication          : Started StartApplication in 3.268 seconds (JVM running for 3.738)","kubernetes":{"pod":{"name":"homs-start-deployment-6878f48fcc-65vcr","uid":"7d925249-2a77-4c28-a462-001d189cdeaa","ip":"172.17.0.3"},"container":{"name":"homs-start-server"},"labels":{"app":"homs-start","pod-template-hash":"6878f48fcc"},"node":{"labels":{"kubernetes_io/arch":"amd64","node_kubernetes_io/exclude-from-external-load-balancers":"","beta_kubernetes_io/arch":"amd64","kubernetes_io/hostname":"minikube","minikube_k8s_io/name":"minikube","minikube_k8s_io/version":"v1.22.0","kubernetes_io/os":"linux","minikube_k8s_io/commit":"a03fbcf166e6f74ef224d4a63be4277d017bb62e","minikube_k8s_io/updated_at":"2021_11_05T12_15_23_0700","node-role_kubernetes_io/control-plane":"","node-role_kubernetes_io/master":"","beta_kubernetes_io/os":"linux"},"hostname":"minikube","name":"minikube","uid":"faec4c1a-9188-408a-aeec-95b24aa47a88"},"namespace":"default","deployment":{"name":"homs-start-deployment"},"namespace_uid":"b880885d-c94a-4cf2-ba2c-1e4cb0d1a691","namespace_labels":{"kubernetes_io/metadata_name":"default"},"replicaset":{"name":"homs-start-deployment-6878f48fcc"}},"ecs":{"version":"1.11.0"},"host":{"os":{"codename":"Core","type":"linux","platform":"centos","version":"7 (Core)","family":"redhat","name":"CentOS Linux","kernel":"5.10.47-linuxkit"},"id":"1820c6c61258c329e88764d3dc4484f3","containerized":true,"ip":["172.17.0.1","192.168.49.2"],"mac":["02:42:d5:27:3f:31","c6:64:9d:f9:89:7b","5a:b1:a0:66:ee:d3","46:41:6e:14:85:14","02:42:c0:a8:31:02"],"hostname":"minikube","architecture":"x86_64","name":"minikube"},"log":{"offset":2787,"file":{"path":"/var/log/containers/homs-start-deployment-6878f48fcc-65vcr_default_homs-start-server-d37b0467d097c00bd203089a97df371cdbacc156493f6b2d995b80395caf516f.log"}},"container":{"image":{"name":"coder4/homs-start:107"},"id":"d37b0467d097c00bd203089a97df371cdbacc156493f6b2d995b80395caf516f","runtime":"docker"}}
 ```
 
-
-
 重启deployment
 
 ```shell
@@ -315,8 +313,6 @@ kubectl rollout restart deployment homs-start-deployment
 ```
 
 启动ElasticSearch
-
-
 
 ```shell
 #!/bin/bash
@@ -366,7 +362,6 @@ docker run \
     --detach \
     --restart always \
     docker.elastic.co/elasticsearch/elasticsearch:7.15.2
-
 ```
 
 你可以通过curl命令，检查启动是否成功：
@@ -461,8 +456,6 @@ docker run \
     --detach \
     --restart always \
     docker.elastic.co/logstash/logstash:7.15.2
-
-
 ```
 
 上述直接挂载了前面配置的pipeline目录。
@@ -487,8 +480,6 @@ docker run \
     --detach \
     --restart always \
     docker.elastic.co/kibana/kibana:7.15.2
-
-
 ```
 
 如果一切顺利，你会看到如图所示的日志：
