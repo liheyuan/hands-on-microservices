@@ -1,5 +1,17 @@
 # JFrog Artifactory搭建Maven私有仓库
 
+在本书技术架构中，我们选用了Gradle做为Java的依赖管理工具。
+
+实际上，Gradle只提供了构建的前端，实际使用的还是Maven仓库。
+
+出于安全性、速度等因素的考量，我们需要配置私有的Maven仓库。
+
+本节，我们将基于JFrog Artifactory，搭建私有的Maven仓库。
+
+## 运行
+
+启动脚本如下：
+
 ```shell
 #!/bin/bash
 
@@ -24,74 +36,69 @@ docker run \
     releases-docker.jfrog.io/jfrog/artifactory-oss:latest
 ```
 
+启动的时间会略长，可以访问 http://127.0.0.1:8082/ui/ 登录，默认的用户名是admin，密码是password。
 
+## 配置
 
-[JFrog](http://127.0.0.1:8082/ui/)
+我们首先设置ldap关联，打开如下菜单：Administration -> Security -> LDAP -> Add Setting
 
-登录
+- LDAP URL：ldap://10.1.172.136:389/dc=coder4,dc=com
 
-用户名admin
+- User DN Pattern：cn={0},ou=rd
 
-密码password
+- Manager DN：cn=readonly,dc=coder4,dc=com
 
+- Manager Password：readonly123
 
-
-设置ldap
-
-Administration -> Security -> LDAP -> Add Setting
-
-LDAP URL：ldap://10.1.172.136:389/dc=coder4,dc=com
-
-User DN Pattern：cn={0},ou=rd
-
-Manager DN：cn=readonly,dc=coder4,dc=com
-
-Manager Password：readonly123
+如下图所示：
 
 ![f](./artifactory-ldap.png)
 
-
-
-默认没有开匿名权限，打开
-
-
+接着，我们打开匿名访问权限(默认是关闭的)，位于：
 
 Administration -> Security -> Security onfiguration  
-选中Allow Anonymous Access，然后点击保存。如下图
+选中Allow Anonymous Access，然后点击保存。如下图所示
 
 ![f](./artifactory-anoymous-access.png)
 
-
-
-新建仓库
+最后，我们新建一个仓库：
 
 Repositories -> Add Repositories -> Local Repositories
 
-Key：homs-release / homs-snapshot
+- Key：homs-release / homs-snapshot
 
-Package Type：Gradle
+- Package Type：Gradle
 
-Repository Key：homs
+- Repository Key：homs
 
-Handle Releases / Handle Snapshots
+- Handle Releases / Handle Snapshots
 
+同时，需要给用户配置权限：
 
+- Application -> Regisigrition -> Artifacts
 
-~/.gradle/gradle.properties
+至此，仓库侧的配置已经完成。
+
+## 使用私有Maven仓库
+
+首先，添加本地全局配置：
+
+修改文件：~/.gradle/gradle.properties
 
 ```groovy
 mavenReleaseRepo=http://127.0.0.1:8082/artifactory/homs-release/
 mavenSnapshotRepo=http://127.0.0.1:8082/artifactory/homs-snapshot/
-mavenUsername=test
-mavenPassword=Test1234
+mavenUsername=zhangsan
+mavenPassword=123456
 ```
 
+上述配置了私有仓库地址，测试和发布是分开的
 
+接下来，我们在项目中修改
 
-homs-demo/build.gradle
+homs-demo/build.gradle：
 
 ```groovy
-
 plugins {
 
   id 'java'
@@ -133,10 +140,15 @@ subprojects {
   }
 
 }
-
 ```
 
+如上所示，我们修改了主项目中的配置
 
+- publising会为每个子项目添加发布任务
+
+- repositoreis指定了发布的私有仓库地址
+
+在子项目中，我们需要略作修改，如下：
 
 homs-client/build.gradle
 
@@ -163,14 +175,14 @@ dependencies {
 }
 ```
 
-要么platform，要么plugin，不能都用
+上述修改，去掉了spring dependency这个插件，转而使用platform模式。
 
+这是一个spring + maven-publish插件共同使用导致的bug，建议都用platform来解决。
 
-
-尝试发布：
+最后，我们尝试发布：
 
 ```shell
-gradle publishAllPublicationsToMaven2Repositor
+gradle publish
 
 > Task :publishHoms-demo-clientPublicationToMaven2Repository
 Cannot upload checksum for snapshot-maven-metadata.xml because the remote repository doesn't support SHA-512. This will not fail the build.
@@ -184,13 +196,19 @@ BUILD SUCCESSFUL in 2s
 4 actionable tasks: 4 executed
 ```
 
-读取配置~/.gradle/init.gradle
+成功！
+
+## 引入依赖
+
+首先配置全局依赖：
+
+～/.gradle/init.gradle
 
 ```groovy
 // project
 allprojects{
     repositories {
-	mavenLocal()
+    mavenLocal()
         maven { url mavenSnapshotRepo }
         maven { url mavenReleaseRepo }
         maven { url 'https://maven.aliyun.com/repository/public/' }
@@ -212,26 +230,23 @@ settingsEvaluated { settings ->
 
         // Add my Artifactory mirror
         repositories {
-	    mavenLocal()
+        mavenLocal()
             maven {
                 url "https://maven.aliyun.com/repository/gradle-plugin/"
             }
         }
     }
 }
-
 ```
 
-
-
-使用homs-start中build.gradle
+在下游中修改homs-start中添加依赖，和往常一样：
 
 ```groovy
 plugins {
-	id 'org.springframework.boot' version '2.5.6'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
-	id 'maven-publish'
+    id 'org.springframework.boot' version '2.5.6'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'maven-publish'
 }
 
 group = 'com.homs'
@@ -239,23 +254,21 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'com.coder4:homs-demo-client:0.0.1-SNAPSHOT'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.coder4:homs-demo-client:0.0.1-SNAPSHOT'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 ```
 
-
-
-尝试
+尝试构建，成功！
 
 ```shell
 gradle build             
@@ -263,12 +276,4 @@ gradle build
 BUILD SUCCESSFUL in 7s
 ```
 
-
-
-https://zhuanlan.zhihu.com/p/242336356
-
-
-
-
-
-
+至此，我们成功引入了基于私有Maven仓库。
