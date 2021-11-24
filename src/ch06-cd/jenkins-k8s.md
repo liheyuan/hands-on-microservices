@@ -245,12 +245,4 @@ kubectl logs -f my-nginx-795f967dd6-7szxp
 
 至此，我们已经完整地实现了全链路的部署流水线开发。
 
-优化(下一节)
-
-gradle加速
-
-版本回退
-
-jenkins shared library
-
-Dockerfile
+同时，上述流水线还有很大的改进空间，我们将在下一节继续优化流水线。
