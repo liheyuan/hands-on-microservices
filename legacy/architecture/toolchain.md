@@ -10,5 +10,4 @@
 
 本书的主线是微服务的架构及开发。为了保证这一主题的的稳定和连惯性，我们将上述研发工具链的使用单独抽提出来，在[《研发工具链》](../toolchain/README.md)一章中一并介绍。
 
-
 [^1]: [Why is Git better than Subversion?](https://stackoverflow.com/questions/871/why-is-git-better-than-subversion)

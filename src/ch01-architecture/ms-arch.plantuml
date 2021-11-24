@@ -1,0 +1,105 @@
+@startuml
+
+title "微服务架构实现"
+
+package "聚合接入层" as l5 {
+    [聚合服务1] as n51
+    [聚合服务2] as n52
+    [聚合服务3] as n53
+    [PaddingPadding] as n54
+    hide n54
+
+    [n51] -[hidden]right-> [n52]
+    [n52] -[hidden]right-> [n53]
+    [n53] -[hidden]right-> [n54]
+}
+
+package "业务服务层" as l4 {
+    [微服务1 ] as n41
+    [微服务2] as n42
+    [微服务3] as n43
+    [微服务4] as n44
+    [Pa] as n45
+    hide n45
+
+    [n41] -[hidden]right-> [n42] 
+    [n42] -[hidden]right-> [n43]
+    [n43] -[hidden]right-> [n44]
+    [n44] -[hidden]right-> [n45]
+}
+
+package "微服务设施层" as l3 {
+    [开发框架] as n31
+    [RPC] as n32
+    [服务注册发现] as n33
+    [配置中心] as n34
+    [ ] as n35
+    hide n35
+    
+
+    [熔断/限流] as n36
+    [数据库] as n37
+    [NoSQL] as n38
+    [消息队列] as n39
+
+    [链路追踪] as n3a
+    [监控] as n3b
+    [报警]  as n3c
+    [日志] as n3d
+
+
+    [n31] -[hidden]right-> [n32]
+    [n32] -[hidden]right-> [n33]
+    [n33] -[hidden]right-> [n34]
+    [n34] -[hidden]right-> [n35]
+
+    [n31] -[hidden]down-> [n36]
+
+    [n36] -[hidden]right-> [n37]
+    [n37] -[hidden]right-> [n38]
+    [n38] -[hidden]right-> [n39]
+
+
+    [n36] -[hidden]down-> [n3a]
+
+    [n3a] -[hidden]right-> [n3b]
+    [n3b] -[hidden]right-> [n3c]
+    [n3c] -[hidden]right-> [n3d]
+}
+
+
+package "运维平台层" as l2 {
+    [CI/CD系统] as n21
+    [部署版本系统] as n22
+    [容器调度系统] as n23
+    [PaddingP] as n24
+    
+    hide n24
+
+    n21 -[hidden]right-> n22 
+    n22 -[hidden]right-> n23
+    n23 -[hidden]right-> n24
+}
+
+
+
+package "基础设施" as l1 {
+    [计 算 资 源] as n11
+    [存 储 资 源] as n12
+    [网 络 资 源] as n13
+    [PaddingPPddi] as n14
+
+    hide n14
+
+    n11 -[hidden]right-> n12
+    n12 -[hidden]right-> n13
+    n13 -[hidden]right-> n14
+}
+
+n51 -[hidden]down-> n41 
+n41 -[hidden]down-> n31
+n3a -[hidden]down-> n21
+n21 -[hidden]down-> n11 
+
+
+@enduml

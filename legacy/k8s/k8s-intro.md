@@ -1,19 +1,6 @@
 # Kubernetes 快速入门
 
-## 从Docker到Kubernetes
-前面已经提到，微服务架构离不开容器技术。
-
-为什么需要容器呢？我们先来看一个集装箱的例子：在一艘货轮上，货物按照整齐的规格码放整齐，从而可以封装进集装箱。集装箱之间不会相互影响，这大大地提升了运输效率。
-
-容器就好比这个集装箱，运行的各式应用程序是货物。为了让应用程序在生产机上跑起来，往往需要做各种配置，非常繁琐，还经常会由于系统版本等原因，和开发环境不一致，从而导致“这个程序本地好好的，放到服务器上就出Bug”这类情况，这就是环境不标准，容器可以对运行环境标准化，很好的解决这类问题。此外，不同的应用程序需要不同的应用环境，如果都部署在一台物理机上，很可能会发生包、依赖冲突，导致无法运维，有了容器后，不同的应用程序放置在不同的容器中，相互隔离开、不会相互影响。其实，虚拟机加一些脚本，也能解决上述的标准化和隔离问题，但是容器更加轻量级，性能损耗比虚拟机低很多，并且多数集成了环境的自描述语言（例如DockerFile），更方便进行维护。
-
-Docker是目前最流行的容器技术之一，按照官方的解释说明：Docker是开源的引擎，用于在开发或运维中构建、部署和运行应用程序。
-
-需要指出的是，很多人把容器技术和Docker划等号，这是不对的。目前的主流容器技术，除了Docker外，还有Rkt、LXD等。
-
-已经有了Docker，为什么还需要Kuberntes呢？因为从单击的Docker到分布式的容器集群，还有很多路要走。Kubernetes是分布式容器集群操作平台，可以轻松地完成部署、调度、扩容等操作。如果说Docker是手动挡汽车的话，那么Kubernetes相当于自动驾驶汽车，只需要很少的步骤，就可以完成复杂的容器集群管理工作。Kubernetes构建于容器引擎之上，除了支持Docker外，也支持Rtk，本书以Kubernetes和Docker为例进行讨论。
-
-## Kubernetes中的操作单元
+## Kubernetes中的基本操作单元
 
 为了适应复杂的业务需求，Kubernetes中内置了不同层级的操作单元：
 * Pod: Pod是Kubernetes的基本操作单元，也是应用运行的载体。如果你了解Docker的话，可以理解为Pod = 若干紧密相连的Docker + 数据卷。Pod中可能包含若干容器，它们是无法进行更细粒度的分割的，例如:微服务和它的日志收集进程。Pod内部的这些容器共享相同的资源(网络、进程通信、数据卷）
@@ -39,7 +26,7 @@ minikube安装妥当后，让我们来部署第一个Deployment。
 首先，启动minikube。第一次启动需要下载ISO镜像，时间较长，请耐心等待一下。
 ```shell
 minikube start --disk-size 50g --memory 4096 --insecure-registry "192.168.99.0/24"
-``` 
+```
 
 上述第一次start实际是配置了minikube虚拟机的参数，我们简单解释一下:
 * disk-size 磁盘空间我们给了50g。我们之后会配置私有Maven仓库，需要建立主仓库索引，默认的20g不太够用。
@@ -52,7 +39,6 @@ Kubernetes支持两种操作方式：命令行参数、yaml文件定义。鉴于
 
 Deployment描述文件，lmsia-abc-server-deployment.yaml
 ```yaml
-
 apiVersion: apps/v1
 // Deployment
 kind: Deployment
@@ -61,13 +47,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: lmsia-abc-server 
+      app: lmsia-abc-server
   replicas: 2
 // Pod define
   template:
     metadata:
       labels:
-        app: lmsia-abc-server 
+        app: lmsia-abc-server
     spec:
       containers:
       - name: lmsia-abc-server-ct

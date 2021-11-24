@@ -1,0 +1,6 @@
+[book]
+authors = ["lihy"]
+language = "en"
+multilingual = false
+src = "src"
+title = "从0到1实战微服务架构"
