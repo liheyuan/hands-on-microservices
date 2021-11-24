@@ -114,5 +114,3 @@ curl -v -sSL -X DELETE "http://${registry}/v2/${name}/manifests/$(
 - 支持每个容器保留最近5个tag
 
 - 将[打造持续交付流水线](../ch06-cd/README.md)中的镜像仓库，替换为私有仓库
-
-
