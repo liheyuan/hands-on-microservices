@@ -1,4 +1,4 @@
-# 基于VictoriaMetrics构造监控系统
+# 基于VictoriaMetrics + Grafana的监控系统
 
 监控(Monitor)与度量(Metrics)是可观测性的重要环节。
 

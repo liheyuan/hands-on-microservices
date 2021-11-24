@@ -438,7 +438,3 @@ public class DemoProducer extends BaseProducer<DemoMessage> {
 ```
 
 由于篇幅所限，我们只实战了基础的消息收发，推荐你根据文档继续探索其他内容，包括：[集群部署]([Deployment - Apache RocketMQ](https://rocketmq.apache.org/docs/rmq-deployment/))、[顺序消息]([Order Message - Apache RocketMQ](https://rocketmq.apache.org/docs/order-example/))、[广播消息]([Broadcasting - Apache RocketMQ](https://rocketmq.apache.org/docs/broadcast-example/))等内容。
-
-
-
-
