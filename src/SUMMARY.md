@@ -54,5 +54,6 @@
 - [工具链](./ch07-tools/README.md)
   
   - [基于LDAP的内网统一认证](./ch06-cd/jenkins.md)
+  - [基于Gitlab搭建版本控制平台](./ch07-tools/gitlab.md)
   - [JFrog Artifactory搭建Maven私有仓库](./ch07-tools/ldap.md)
   - [使用Registry2搭建Docker私有仓库](./ch07-tools/registry2.md)
