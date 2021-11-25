@@ -1,8 +1,8 @@
 # 从0到1实战微服务架构(第2版)
 
-## ## 在线阅读地址
+## 在线阅读地址
 
-[在线阅读]([前言 - 从0到1实战微服务架构(第2版)](https://coder4.com/homs_online/))
+[地址1](https://coder4.com/homs_online/)
 
 ## 第2版前言
 
@@ -17,7 +17,7 @@
 
 由于技术更新迭代频繁，这是一次完全的重写，不是修订。
 
-由于gitbook项目已不再维护，我改用[mdbook](https://github.com/rust-lang/mdBook)做为渲染工具，[MarkText](https://github.com/marktext/marktext)做为写作工具。
+由于gitbook项目已不再维护，我改用[mdBook](https://github.com/rust-lang/mdBook)做为渲染工具，[MarkText](https://github.com/marktext/marktext)做为写作工具。
 
 写作水平有限，还请各位多提宝贵意见。
 
@@ -75,4 +75,4 @@
 
 依照 [署名-非商业性使用-相同方式共享](https://creativecommons.org/licenses/by-nc-sa/2.5/cn/) ，任何人可以在保留署名的情况下转载。但严禁用于商业用途。
 
-This is a book powered by [GitBook](https://github.com/GitbookIO/gitbook).
+This is a book powered by [mdBook](https://github.com/rust-lang/mdBook).
