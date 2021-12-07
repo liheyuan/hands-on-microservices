@@ -4,12 +4,14 @@
 
 本节将讨论与研发密切相关的工具链，包括
 
-1. Ldap及内网认证系统
+1. 快速生成微服务的模板工具
 
-2. 基于Gitlab的私有代码平台
+2. Ldap及内网认证系统
 
-3. 基于JFrog Artifactory的Maven私有仓库
+3. 基于Gitlab的私有代码平台
 
-4. 基于Registry 2的Docker镜像私有仓库
+4. 基于JFrog Artifactory的Maven私有仓库
+
+5. 基于Registry 2的Docker镜像私有仓库
 
 如果你有好工具推荐，请提Issue告诉我 : - )
