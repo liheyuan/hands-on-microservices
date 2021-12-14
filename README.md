@@ -2,7 +2,7 @@
 
 ## 地址汇总
 
-* [Github项目](https://github.com/liheyuan/hands-on-microservices)，**求Star : - )**
+* [Github项目 求Star:-)](https://github.com/liheyuan/hands-on-microservices)
 * [在线阅读](https://coder4.com/homs_online/)
 
 ## 第2版前言
