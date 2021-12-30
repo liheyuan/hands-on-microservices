@@ -121,4 +121,8 @@ docker exec -it gitlab /bin/bash
 
 重启后，我们使用LDAP中配置的zhangsan / 123456进行登录，成功！
 
-搭建Gitlab只是起点，你还应熟悉其基本用法，推荐[这篇文章]([安装和使用GitLab - 云服务器 ECS - 阿里云](https://help.aliyun.com/document_detail/52857.html))，这里不做过多阐述。
+搭建Gitlab只是起点，你还应熟悉基本用法、开发模式，推荐如下文章：
+
+- [安装和使用GitLab]([安装和使用GitLab - 云服务器 ECS - 阿里云](https://help.aliyun.com/document_detail/52857.html))
+
+- [Creating merge requests]([Creating merge requests | GitLab](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html))
