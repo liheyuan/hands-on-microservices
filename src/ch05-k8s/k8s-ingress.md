@@ -155,9 +155,186 @@ Commercial support is available at
 
 如上，我们成功的用prefix的路径(my-nginx / my-httpd)，访问了两个不同的内部service！
 
-事实上，Nginx Ingress也支持通过不同的Host来区分不同Service，你可以根据官方文档，自行尝试配置。
+## 修改转发前缀
+
+在上述的配置中，我们实现了多服务的转发，但准法后的location存在一些问题，我们换一个service验证一下：
+
+```shell
+kubectl create deployment service1 --image=mendhak/http-https-echo:23
+kubectl create deployment service2 --image=mendhak/http-https-echo:23
+```
+
+对外暴露服务：
+
+```shell
+kubectl expose deployment/service1 --port=8080
+kubectl expose deployment/service2 --port=808
+```
+
+修改一下ingress：
+
+```shell
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homs-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx  
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  tls:
+  - hosts:
+    - homs.coder4.com
+    secretName: homs-secret
+  rules:
+  - host: homs.coder4.com
+    http:
+      paths:
+      - path: /service1/?(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: service1
+            port:
+              number: 8080
+      - path: /service2/?(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: service2
+            port:
+              number: 8080
+```
+
+登录到minikube后curl：
+
+```shell
+{
+  "path": "/",
+  "headers": {
+    "host": "192.168.64.11.nip.io",
+    "x-request-id": "7a00b30a5d4fd4c084d2bcfbfd44f636",
+    "x-real-ip": "192.168.64.11",
+    "x-forwarded-for": "192.168.64.11",
+    "x-forwarded-host": "192.168.64.11.nip.io",
+    "x-forwarded-port": "443",
+    "x-forwarded-proto": "https",
+    "x-scheme": "https",
+    "user-agent": "curl/7.76.0",
+    "accept": "*/*"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "192.168.64.11.nip.io",
+  "ip": "192.168.64.11",
+  "ips": [
+    "192.168.64.11"
+  ],
+  "protocol": "https",
+  "query": {},
+  "subdomains": [
+    "11",
+    "64",
+    "168",
+    "192"
+  ],
+  "xhr": false,
+  "os": {
+    "hostname": "service2-5686d4f68c-4vz7d"
+  },
+  "connection": {}
+}
+```
+
+观察上述输出，发现转发后的location被重定向了，如果我们的服务想收到完整的请求，如何实现呢？
+
+我们可以修改ingress配置，在路径上添加一段分组匹配，如下：
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homs-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx  
+    nginx.ingress.kubernetes.io/rewrite-target: /$1$2
+    nginx.ingress.kubernetes.io/app-root: /service1
+spec:
+  tls:
+  - hosts:
+    - homs.coder4.com
+    secretName: homs-secret
+  rules:
+  - host: 192.168.64.11.nip.io 
+    http:
+      paths:
+      - path: /(service1/?)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: service1
+            port:
+              number: 8080
+      - path: /(service2/?)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: service2
+            port:
+              number: 8080
+
+```
+
+生效后，再次curl：
+
+```shell
+curl -kL "http://192.168.64.11.nip.io/service2"
+{
+  "path": "/service2",
+  "headers": {
+    "host": "192.168.64.11.nip.io",
+    "x-request-id": "b5759cf6f47d0ed713142178ddea4f96",
+    "x-real-ip": "192.168.64.11",
+    "x-forwarded-for": "192.168.64.11",
+    "x-forwarded-host": "192.168.64.11.nip.io",
+    "x-forwarded-port": "443",
+    "x-forwarded-proto": "https",
+    "x-scheme": "https",
+    "user-agent": "curl/7.76.0",
+    "accept": "*/*"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "192.168.64.11.nip.io",
+  "ip": "192.168.64.11",
+  "ips": [
+    "192.168.64.11"
+  ],
+  "protocol": "https",
+  "query": {},
+  "subdomains": [
+    "11",
+    "64",
+    "168",
+    "192"
+  ],
+  "xhr": false,
+  "os": {
+    "hostname": "service2-5686d4f68c-4vz7d"
+  },
+  "connection": {}
+}
+```
+
+成功！
+
+Nginx Ingress也支持通过不同的Host来区分不同Service，也支持nginx的部分自定义配置，推荐你阅读[官方ingress例子]([Introduction - NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/examples/))。
 
 ## 四层ingress
+
+在上述两个例子中，我们实现了7层http协议的暴露 & 转发，ingress也支持4层的TCP协议。
 
 为了防止影响，我们首先重置集群，并重新启用ingress。
 
