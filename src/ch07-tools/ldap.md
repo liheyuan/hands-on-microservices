@@ -59,7 +59,7 @@ docker run \
 
 - 配置用户密码：config123，请根据需要自行更改
 
-- 制度用户：readonly/readlony123，可自行更改
+- 只读用户：readonly/readlony123，可自行更改
 
 启动成功后，我们校验下初始化的几个用户：
 
