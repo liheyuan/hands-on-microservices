@@ -30,7 +30,7 @@
   
   - [基于ELKFK打造日志平台](./ch04-ms-dev3/elkfk.md)
   - [基于SkyWalking的链路追踪系统](./ch04-ms-dev3/skywalking.md)
-  - [基于MicroMeter实现自定义监控项](./ch04-ms-dev3/micrometer.md)
+  - [基于MicroMeter实现自定义应哟你监控指标](./ch04-ms-dev3/micrometer.md)
   - [基于VictoriaMetrics + Grafana的监控系统](./ch04-ms-dev3/victorialmetrics.md) 
 
 - [容器与编排系统](./ch05-k8s/README.md)
