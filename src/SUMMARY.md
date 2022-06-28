@@ -2,13 +2,12 @@
 
 - [前言](./README.md)
 
-- [微服务架构概述](./ch01-architecture/README.md)
+- [微服务概述](./ch01-architecture/micro-service-intro.md)
   
-  - [微服务概述](./ch01-architecture/micro-service-intro.md)
-  - [一种微服务的分层架构](./ch01-architecture/ms-architecture.md)
-  - [一种微服务分层架构的技术栈选型](./ch01-architecture/ms-tech-stack.md)
   - [微服务研发工具链](./ch01-architecture/rd-ops-toolchain.md)
   - [持续集成、持续部署、持续交付](./ch01-architecture/continuous-x.md)
+  - [一种微服务的分层架构](./ch01-architecture/ms-architecture.md)
+  - [一种微服务分层架构的技术栈选型](./ch01-architecture/ms-tech-stack.md)
 
 - [微服务开发上篇](./ch02-ms-dev1/README.md)
   
@@ -31,7 +30,7 @@
   
   - [基于ELKFK打造日志平台](./ch04-ms-dev3/elkfk.md)
   - [基于SkyWalking的链路追踪系统](./ch04-ms-dev3/skywalking.md)
-  - [基于MicroMeter实现自定义应哟你监控指标](./ch04-ms-dev3/micrometer.md)
+  - [基于MicroMeter实现自定义应用监控指标](./ch04-ms-dev3/micrometer.md)
   - [基于VictoriaMetrics + Grafana的监控系统](./ch04-ms-dev3/victorialmetrics.md) 
 
 - [容器与编排系统](./ch05-k8s/README.md)
@@ -54,9 +53,6 @@
 
 - [工具链](./ch07-tools/README.md)
   
-  - [微服务模板工具](./ch07-tools/microservice-template.md)
-  - [基于LDAP的内网统一认证](./ch07-tools/ldap.md)
-  - [基于Gitlab搭建版本控制平台](./ch07-tools/gitlab.md)
-  - [JFrog Artifactory搭建Maven私有仓库](./ch07-tools/jfrog-artifactory.md)
+  - [基于LDAP的内网统一认证](./ch06-cd/jenkins.md)
+  - [JFrog Artifactory搭建Maven私有仓库](./ch07-tools/ldap.md)
   - [使用Registry2搭建Docker私有仓库](./ch07-tools/registry2.md)
-  - [搭建Seafile共享云盘](./ch07-tools/seafile.md)

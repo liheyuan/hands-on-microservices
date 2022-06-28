@@ -139,7 +139,6 @@ public class MeterConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/static/*");
     }
 }
-
 ```
 
 上面代码很简单，就是新增了新的拦截器MeterInterceptor。
@@ -241,7 +240,6 @@ public class MeterInterceptor implements HandlerInterceptor {
     }
 
 }
-
 ```
 
 代码有点长，解释一下：

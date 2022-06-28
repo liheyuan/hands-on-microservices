@@ -1,28 +1,6 @@
-# 从0到1实战微服务架构(第2版)
+# 从0到1实战微服务架构(开源电子书)
 
-## 地址汇总
-
-* [Github项目 求Star:-)](https://github.com/liheyuan/hands-on-microservices)
-* [在线阅读](https://coder4.com/homs_online/)
-
-## 第2版前言
-
-自从本书发布了后，技术圈发生了许多变化：
-
-* Spring Boot 2.X 稳定版发布
-* Kubernetes下的包管理项目“Helm”，正式加入CNCF基金会
-* 阿里巴巴开源了Nacos服务发现项目
-* ......
-
-3年后的2021年，我正式开启了本书2.0版的写作计划。
-
-由于技术更新迭代频繁，这是一次完全的重写，不是修订。
-
-由于gitbook项目已不再维护，我改用[mdBook](https://github.com/rust-lang/mdBook)做为渲染工具，[MarkText](https://github.com/marktext/marktext)做为写作工具。
-
-写作水平有限，还请各位多提宝贵意见。
-
-## 第1版前言
+## 前言
 
 微服务是继SOA后，最流行的服务架构风格之一。
 
@@ -49,6 +27,23 @@
 如果本书帮助了你，欢迎在在[github](https://github.com/liheyuan/hands-on-microservices)加Star，但严禁用于商业用途！(参见本页底部版权声明)
 
 由于能力水平所限，本书难免存在各种错误，恳请各位进行指正(Issue or PR)，谢谢！
+
+## 2.0前言
+
+自从本书发布了1.0版本后，已过去2年多了。
+
+技术圈又发生了很多变化，与本书密切相关的有：
+
+* Spring Boot 2.0 稳定版发布
+* Kubernetes下的包管理项目“Helm”，正式加入CNCF基金会
+
+为此，我开启了本书2.0版的写作计划。
+
+由于gitbook项目已不在维护，我们改用改用[mdbook](https://github.com/rust-lang/mdBook)做为图书渲染工具。
+
+本书的写作工具为[MarkText](https://github.com/marktext/marktext)。
+
+写作水平有限，还请各位多提宝贵意见。
 
 ## 读者基础
 
